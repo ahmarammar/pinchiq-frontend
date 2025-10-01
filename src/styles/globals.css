@@ -8,6 +8,14 @@
   --font-mono: var(--font-geist-mono);
   --font-fustat: 'Fustat', sans-serif;
 
+  /* Base Colors */
+  --color-background: 255 255 255;
+  --color-foreground: 36 36 36;
+  --color-border: 229 231 235;
+  --color-ring: 59 130 246;
+  --color-muted: 248 248 248;
+  --color-muted-foreground: 150 150 150;
+
   /* System Colors */
   --color-background-linear: var(--background-linear);
   --color-white-linear: var(--white-linear);

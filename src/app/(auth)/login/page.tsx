@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-import { login } from '@/actions/auth-actions';
+import { login, getCurrentUser } from '@/actions/auth-actions';
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +22,19 @@ export default function Login() {
       const result = await login(email, password);
 
       if (result.success) {
-        router.push('/');
+        const user = await getCurrentUser();
+        const callbackUrl = searchParams.get('callbackUrl');
+
+        if (callbackUrl) {
+          router.push(callbackUrl);
+        } else if (user?.role === 'broker') {
+          router.push('/broker');
+        } else if (user?.role === 'provider') {
+          router.push('/provider');
+        } else {
+          router.push('/');
+        }
+
         router.refresh();
       } else {
         setError(result.message || 'Login failed');
