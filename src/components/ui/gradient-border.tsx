@@ -1,23 +1,25 @@
 import React, { ReactNode } from 'react';
 
-interface BorderEffectProps {
+interface GradientBorderProps {
   children: ReactNode;
   rotation?: number;
   insetX?: string;
   insetY?: string;
   gradientFrom?: string;
   gradientTo?: string;
+  borderWidth?: string;
   borderRadius?: string;
   className?: string;
 }
 
-export const BorderEffect: React.FC<BorderEffectProps> = ({
+export const GradientBorder: React.FC<GradientBorderProps> = ({
   children,
   rotation = 0.75,
   insetX = '0.06rem',
   insetY = '0.094rem',
-  gradientFrom = '#fcfcfc',
-  gradientTo = '#fcfcfc',
+  gradientFrom = '#ffffff',
+  gradientTo = '#ffffff',
+  borderWidth = '1.5px',
   borderRadius = 'rounded-full',
   className = '',
 }) => {
@@ -28,8 +30,13 @@ export const BorderEffect: React.FC<BorderEffectProps> = ({
         style={{
           transform: `rotate(${rotation}deg)`,
           insetInline: `-${insetX}`,
-          insetBlock: insetY,
-          backgroundImage: `linear-gradient(to right, ${gradientFrom}, transparent, ${gradientTo})`,
+          insetBlock: `${insetY}`, // Changed from just insetY to -${insetY}
+          background: `linear-gradient(to right, ${gradientFrom}, transparent, ${gradientTo})`,
+          padding: borderWidth,
+          WebkitMask:
+            'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
         }}
       />
       <div className="relative z-10">{children}</div>
