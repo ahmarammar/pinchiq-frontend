@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Link from 'next/link';
+
 interface ExploreLinkProps {
   href?: string;
   onClick?: () => void;
@@ -22,7 +24,7 @@ export const ExploreLink: React.FC<ExploreLinkProps> = ({
   };
 
   return (
-    <a
+    <Link
       href={href}
       onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
@@ -67,6 +69,6 @@ export const ExploreLink: React.FC<ExploreLinkProps> = ({
           strokeLinejoin="round"
         />
       </svg>
-    </a>
+    </Link>
   );
 };
