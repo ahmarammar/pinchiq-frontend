@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import { login, getCurrentUser } from '@/actions/auth-actions';
+import { getCurrentUser, login } from '@/actions/auth-actions';
+import { BorderEffect } from '@/components/ui/border-effect';
 
 export default function Login() {
   const router = useRouter();
@@ -62,9 +64,7 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8 p-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold">Pinchiq</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to your account
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
         </div>
 
         <div className="mt-8 rounded-lg bg-white p-8 shadow">
@@ -88,7 +88,7 @@ export default function Login() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-900 focus:ring-1 focus:ring-gray-900 focus:outline-none"
                 placeholder="Enter your email"
               />
             </div>
@@ -106,18 +106,22 @@ export default function Login() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-gray-900 focus:ring-1 focus:ring-gray-900 focus:outline-none"
                 placeholder="Enter your password"
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-md bg-gray-900 px-4 py-2 text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
+            <div className="bg-blue-2 p-8">
+              <BorderEffect>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full rounded-full bg-blue-300 px-4 py-4 text-white focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isLoading ? 'Signing in...' : 'Sign in'}
+                </button>
+              </BorderEffect>
+            </div>
           </form>
 
           <div className="mt-6 border-t pt-6">
@@ -130,8 +134,8 @@ export default function Login() {
                 onClick={() => fillCredentials('broker')}
                 className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-left text-sm hover:bg-gray-50"
               >
-                <span className="font-medium">Broker:</span>{' '}
-                broker@pinchiq.com / broker123
+                <span className="font-medium">Broker:</span> broker@pinchiq.com
+                / broker123
               </button>
               <button
                 type="button"

@@ -59,8 +59,16 @@
 
 :root {
   /* System Colors */
-  --background-linear: linear-gradient(180deg, rgb(82, 95, 186) 0%, rgb(86, 171, 255) 100%);
-  --white-linear: linear-gradient(0deg, rgb(232, 232, 232) 0%, rgb(255, 255, 255) 100%);
+  --background-linear: linear-gradient(
+    180deg,
+    rgb(82, 95, 186) 0%,
+    rgb(86, 171, 255) 100%
+  );
+  --white-linear: linear-gradient(
+    0deg,
+    rgb(232, 232, 232) 0%,
+    rgb(255, 255, 255) 100%
+  );
   --button-gloss: rgb(232, 232, 232);
   --white: rgb(255, 255, 255);
   --black: rgb(36, 36, 36);
@@ -68,8 +76,16 @@
   --secondary-text: rgb(150, 150, 150);
   --gray-background: rgb(248, 248, 248);
   --white-70: rgba(255, 255, 255, 0.7);
-  --blue-linear: linear-gradient(180deg, rgb(115, 173, 255) 0%, rgb(115, 173, 255) 100%);
-  --linear: linear-gradient(0deg, rgba(232, 232, 232, 0) 0%, rgba(232, 232, 232, 0) 100%);
+  --blue-linear: linear-gradient(
+    180deg,
+    rgb(115, 173, 255) 0%,
+    rgb(115, 173, 255) 100%
+  );
+  --linear: linear-gradient(
+    0deg,
+    rgba(232, 232, 232, 0) 0%,
+    rgba(232, 232, 232, 0) 100%
+  );
   --blue-2: rgb(115, 173, 255);
 }
 
