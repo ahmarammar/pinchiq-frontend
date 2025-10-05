@@ -6,6 +6,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import { getCurrentUser, login } from '@/actions/auth-actions';
 import { BorderEffect } from '@/components/ui/border-effect';
+import { CircleScrollButton } from '@/components/ui/circle-scroll-button';
+import { ExploreLink } from '@/components/ui/explore-link';
+import { InsuredButton } from '@/components/ui/insured-button';
+import { ReferClientButton } from '@/components/ui/refer-client-button';
+import { Step } from '@/components/ui/step';
 
 export default function Login() {
   const router = useRouter();
@@ -74,7 +79,6 @@ export default function Login() {
                 {error}
               </div>
             )}
-
             <div>
               <label
                 htmlFor="email"
@@ -92,7 +96,6 @@ export default function Login() {
                 placeholder="Enter your email"
               />
             </div>
-
             <div>
               <label
                 htmlFor="password"
@@ -110,18 +113,18 @@ export default function Login() {
                 placeholder="Enter your password"
               />
             </div>
-
-            <div className="bg-blue-2 p-8">
+            <div className="bg-amber-600 p-6">
               <BorderEffect>
-                <button
+                <InsuredButton
                   type="submit"
                   disabled={isLoading}
-                  className="w-full rounded-full bg-blue-300 px-4 py-4 text-white focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isLoading ? 'Signing in...' : 'Sign in'}
-                </button>
+                  isLoading={isLoading}
+                />
               </BorderEffect>
             </div>
+            <CircleScrollButton />
+            <Step title="Business Details" stepNumber={2} />
+            <ExploreLink />
           </form>
 
           <div className="mt-6 border-t pt-6">
