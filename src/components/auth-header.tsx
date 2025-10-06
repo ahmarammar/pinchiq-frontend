@@ -22,7 +22,7 @@ export default function AuthHeader() {
           <AuthButton href="/login" variant="secondary">
             Log In
           </AuthButton>
-          <AuthButton href="/signup" variant="primary">
+          <AuthButton href="/signup" variant="secondary">
             Sign Up
           </AuthButton>
         </div>

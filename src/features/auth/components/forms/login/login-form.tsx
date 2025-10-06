@@ -2,19 +2,14 @@
 
 import { useState } from 'react';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 import { Eye, EyeOff } from 'lucide-react';
 
-interface SignupFormProps {
-  role: 'broker' | 'provider';
-}
-
-export default function SignupForm({ role }: SignupFormProps) {
-  const router = useRouter();
+export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberDevice, setRememberDevice] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
     email: '',
     password: '',
   });
@@ -22,31 +17,12 @@ export default function SignupForm({ role }: SignupFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    console.log('Form submitted:', { ...formData, role });
-    // Navigate to verification page
-    router.push('/signup/verify-email');
+    console.log('Form submitted:', { ...formData, rememberDevice });
   };
 
   return (
     <div className="rounded-[32px] bg-white p-8 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Full Name */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-900">
-            Full Name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your full name"
-            value={formData.fullName}
-            onChange={e =>
-              setFormData({ ...formData, fullName: e.target.value })
-            }
-            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
-            required
-          />
-        </div>
-
         {/* Email Address */}
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-900">
@@ -77,7 +53,6 @@ export default function SignupForm({ role }: SignupFormProps) {
               }
               className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
               required
-              minLength={8}
             />
             <button
               type="button"
@@ -91,17 +66,39 @@ export default function SignupForm({ role }: SignupFormProps) {
               )}
             </button>
           </div>
-          <p className="mt-2 text-xs text-gray-500">
-            Must be at least 8 characters
-          </p>
+          <div className="mt-2 flex items-center justify-between">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-blue-600 hover:text-blue-700 hover:underline"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </div>
 
-        {/* Continue Button */}
+        {/* Remember this device */}
+        <div className="flex items-center">
+          <input
+            id="remember-device"
+            type="checkbox"
+            checked={rememberDevice}
+            onChange={e => setRememberDevice(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label
+            htmlFor="remember-device"
+            className="ml-2 text-sm text-gray-900"
+          >
+            Remember this device
+          </label>
+        </div>
+
+        {/* Sign In Button */}
         <button
           type="submit"
           className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-base font-semibold text-white transition-colors hover:bg-gray-800"
         >
-          Continue
+          Sign In
         </button>
 
         {/* Social Login */}

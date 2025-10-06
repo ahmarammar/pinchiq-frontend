@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 
@@ -15,6 +18,21 @@ export default function AuthButton({
   children,
   className,
 }: AuthButtonProps) {
+  const pathname = usePathname();
+
+  // Check if current route matches the button's href or is a child route
+  const isActive = pathname === href || pathname.startsWith(href + '/');
+
+  // If on forgot-password, verify-email, reset-password, or password-updated routes, activate login button
+  const passwordResetRoutes = [
+    '/forgot-password',
+    '/verify-email',
+    '/reset-password',
+    '/password-updated',
+  ];
+  const isPasswordResetFlow = passwordResetRoutes.includes(pathname);
+  const shouldActivateLogin = href === '/login' && isPasswordResetFlow;
+
   const baseStyles =
     'inline-flex min-w-[80px] items-center justify-center gap-2.5 rounded-[100px] px-3.5 py-2.5 font-medium transition-all duration-200';
 
@@ -23,8 +41,14 @@ export default function AuthButton({
     secondary: 'bg-[#FFFFFF26] text-white hover:bg-[#FFFFFF40]',
   };
 
+  // If active or login button during password reset flow, use primary variant
+  const activeVariant = isActive || shouldActivateLogin ? 'primary' : variant;
+
   return (
-    <Link href={href} className={cn(baseStyles, variants[variant], className)}>
+    <Link
+      href={href}
+      className={cn(baseStyles, variants[activeVariant], className)}
+    >
       {children}
     </Link>
   );
