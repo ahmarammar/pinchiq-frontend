@@ -234,15 +234,19 @@ export default function MyPoliciesTable() {
     <div className="items-center justify-center space-y-10 space-x-10">
       {/* Header */}
       <div className="mb-6">
+        <h1
+          className="text-[3.25rem] leading-[100%] font-medium tracking-[-0.04em] text-[#242424] capitalize"
+          style={{ fontFamily: 'Fustat' }}
+        >
+          My Policies
+        </h1>
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-[2.5rem] leading-tight font-bold text-gray-900">
-              My Policies
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Keep track of your organization's insurance portfolio.
-            </p>
-          </div>
+          <p
+            className="mt-5 text-base leading-[120%] font-medium text-[#929292]"
+            style={{ fontFamily: 'Fustat' }}
+          >
+            Keep track of your organization's insurance portfolio.
+          </p>
           <div className="flex items-center gap-2">
             <button className="flex h-[2.375rem] items-center justify-center rounded-full bg-[#F8F8F8] px-5 text-sm font-medium text-gray-900 backdrop-blur-[20px] hover:bg-gray-200">
               Filters
