@@ -5,6 +5,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import BlackButton from '@/components/ui/black-button';
+
 export default function ForgotPasswordForm() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -36,12 +38,7 @@ export default function ForgotPasswordForm() {
         </div>
 
         {/* Reset Password Button */}
-        <button
-          type="submit"
-          className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-base font-semibold text-white transition-colors hover:bg-gray-800"
-        >
-          Reset password
-        </button>
+        <BlackButton type="submit">Reset password</BlackButton>
 
         {/* Back to sign in */}
         <Link

@@ -5,6 +5,8 @@ import { KeyboardEvent, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import BlackButton from '@/components/ui/black-button';
+
 interface VerifyEmailFormProps {
   email?: string;
   onSuccess?: string; // Route to navigate to on success
@@ -126,13 +128,9 @@ export default function VerifyEmailForm({
         )}
 
         {/* Verify Button */}
-        <button
-          type="submit"
-          disabled={showTerms && !agreedToTerms}
-          className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-base font-semibold text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <BlackButton type="submit" disabled={showTerms && !agreedToTerms}>
           Verify
-        </button>
+        </BlackButton>
 
         {/* Help Text */}
         <div className="text-center text-sm text-gray-600">

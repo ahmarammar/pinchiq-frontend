@@ -1,0 +1,436 @@
+'use client';
+
+import { useState } from 'react';
+
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { MoreVertical } from 'lucide-react';
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+
+interface Policy {
+  id: string;
+  name: string;
+  status: string;
+  facilities: number;
+  renewalDate: string;
+  icon: string;
+}
+
+const mockPolicies: Policy[] = [
+  {
+    id: '1',
+    name: 'Maplewood Senior Living',
+    status: 'Accepting Bids',
+    facilities: 27,
+    renewalDate: 'Sep 15, 2026',
+    icon: '✕',
+  },
+  {
+    id: '2',
+    name: 'Riverside Care Center',
+    status: 'Action Required',
+    facilities: 34,
+    renewalDate: 'Oct 22, 2024',
+    icon: '◧',
+  },
+  {
+    id: '3',
+    name: 'Willow Creek Retirement Home',
+    status: 'Ready to Renew',
+    facilities: 42,
+    renewalDate: 'Nov 30, 2023',
+    icon: '●',
+  },
+  {
+    id: '4',
+    name: 'Bright Horizons Assisted Living',
+    status: 'Completed',
+    facilities: 58,
+    renewalDate: 'Jan 5, 2027',
+    icon: '◧',
+  },
+  {
+    id: '5',
+    name: 'Oak Hill Nursing Home',
+    status: 'Accepting Bids',
+    facilities: 63,
+    renewalDate: 'Feb 18, 2025',
+    icon: '⚷',
+  },
+  {
+    id: '6',
+    name: 'Harborview Long-Term Care',
+    status: 'Action Required',
+    facilities: 79,
+    renewalDate: 'Mar 27, 2028',
+    icon: '⚸',
+  },
+  {
+    id: '7',
+    name: 'Silverlake Wellness Center',
+    status: 'Ready to Renew',
+    facilities: 85,
+    renewalDate: 'Apr 11, 2026',
+    icon: '⚶',
+  },
+  {
+    id: '8',
+    name: 'Silverlake Wellness Center',
+    status: 'Completed',
+    facilities: 85,
+    renewalDate: 'Apr 11, 2026',
+    icon: '⊕',
+  },
+  {
+    id: '9',
+    name: 'Sunset Valley Care Home',
+    status: 'Accepting Bids',
+    facilities: 45,
+    renewalDate: 'May 15, 2026',
+    icon: '✕',
+  },
+  {
+    id: '10',
+    name: 'Mountain View Senior Living',
+    status: 'Action Required',
+    facilities: 52,
+    renewalDate: 'Jun 20, 2024',
+    icon: '◧',
+  },
+  {
+    id: '11',
+    name: 'Lakeside Retirement Community',
+    status: 'Ready to Renew',
+    facilities: 38,
+    renewalDate: 'Jul 10, 2023',
+    icon: '●',
+  },
+  {
+    id: '12',
+    name: 'Greenfield Assisted Living',
+    status: 'Completed',
+    facilities: 67,
+    renewalDate: 'Aug 25, 2027',
+    icon: '◧',
+  },
+];
+
+const columns: ColumnDef<Policy>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Policy',
+    cell: ({ row }) => (
+      <div className="flex items-center gap-3">
+        <span className="text-lg">{row.original.icon}</span>
+        <span className="text-sm font-medium text-gray-900">
+          {row.getValue('name')}
+        </span>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as string;
+      const getStatusColor = (status: string) => {
+        switch (status) {
+          case 'Accepting Bids':
+            return 'bg-[#00C389]';
+          case 'Action Required':
+            return 'bg-[#FF6B9D]';
+          case 'Ready to Renew':
+            return 'bg-[#FFB800]';
+          case 'Completed':
+            return 'bg-[#4A90E2]';
+          default:
+            return 'bg-gray-400';
+        }
+      };
+
+      return (
+        <div className="inline-flex h-[1.875rem] items-center gap-2 rounded-full bg-white px-3">
+          <span
+            className={`h-2 w-2 flex-shrink-0 rounded-full ${getStatusColor(status)}`}
+          ></span>
+          <span className="text-sm leading-none font-medium text-gray-900">
+            {status}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'facilities',
+    header: 'Facilities',
+    cell: ({ row }) => (
+      <div className="flex h-[1.875rem] w-[2.4375rem] items-center justify-center gap-2.5 rounded-full bg-white px-3 py-1.5">
+        <span className="text-sm font-medium text-gray-900">
+          {row.getValue('facilities')}
+        </span>
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'renewalDate',
+    header: 'Renewal date',
+    cell: ({ row }) => (
+      <span className="text-sm text-gray-900">
+        {row.getValue('renewalDate')}
+      </span>
+    ),
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: () => (
+      <button className="flex -space-x-3 text-gray-400">
+        <MoreVertical className="h-5 w-5" />
+        <MoreVertical className="h-5 w-5" />
+      </button>
+    ),
+  },
+];
+
+export default function MyPoliciesTable() {
+  const [data] = useState<Policy[]>(mockPolicies);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 10,
+      },
+    },
+  });
+
+  return (
+    <div className="items-center justify-center space-y-10 space-x-10">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-[2.5rem] leading-tight font-bold text-gray-900">
+              My Policies
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              Keep track of your organization's insurance portfolio.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="flex h-[2.375rem] items-center justify-center rounded-full bg-[#F8F8F8] px-5 text-sm font-medium text-gray-900 backdrop-blur-[20px] hover:bg-gray-200">
+              Filters
+            </button>
+            <button className="flex h-[2.375rem] items-center justify-center gap-2 rounded-full bg-[#F8F8F8] px-5 text-sm font-medium text-gray-900 backdrop-blur-[20px] hover:bg-gray-200">
+              <span className="text-gray-500">Sort by:</span>
+              <span className="font-semibold">Recent</span>
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            <button className="flex h-[2.375rem] items-center justify-center rounded-full bg-[#242424] px-5 text-sm font-semibold text-white hover:bg-gray-800">
+              + Add Policy
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-[#f8f8f8] px-12 py-3">
+        <Table>
+          <TableHeader className="bg-[#F8F8F8]">
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow
+                key={headerGroup.id}
+                className="border-0 hover:bg-transparent"
+              >
+                {headerGroup.headers.map(header => (
+                  <TableHead
+                    key={header.id}
+                    className="px-6 py-3 text-sm leading-[120%] font-medium text-[#7C7C7C]"
+                    style={{ fontFamily: 'Fustat' }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody className="">
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  className="border-b border-gray-100 transition-colors hover:bg-gray-50"
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id} className="px-6 py-5">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+          <TableFooter>
+            <TableRow className="border-0 bg-[#f8f8f8]">
+              <TableCell colSpan={columns.length} className="px-6 py-3.5">
+                {/* Pagination */}
+                <div className="flex items-center justify-between">
+                  <div className="flex h-12 items-center gap-1 rounded-full bg-white p-1 text-sm text-gray-600">
+                    <span className="flex h-10 w-21 items-center justify-center gap-2.5 rounded-full bg-[#F8F8F8] px-4 py-3 font-medium">
+                      {table.getRowModel().rows.length} items
+                    </span>
+                    <select
+                      value={table.getState().pagination.pageSize}
+                      onChange={e => {
+                        table.setPageSize(Number(e.target.value));
+                      }}
+                      className="rounded-full border-0 bg-transparent px-2 py-1 text-sm font-medium text-gray-900 focus:ring-0 focus:outline-none"
+                    >
+                      {[10, 20, 50, 100].map(pageSize => (
+                        <option key={pageSize} value={pageSize}>
+                          {pageSize}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="flex h-10 w-21 items-center justify-center gap-2.5 rounded-full px-4 py-3 font-medium">
+                      Scroll
+                    </span>
+                  </div>
+
+                  {/* Pagination 2 */}
+                  <Pagination className="m-0 w-auto px-20">
+                    <PaginationContent className="h-12 justify-center gap-1 rounded-full bg-white px-2">
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => table.previousPage()}
+                          className={`h-10 rounded-full px-4 text-sm font-medium text-gray-900 hover:bg-gray-200 ${
+                            !table.getCanPreviousPage()
+                              ? 'pointer-events-none opacity-50'
+                              : 'cursor-pointer'
+                          }`}
+                        />
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => table.setPageIndex(0)}
+                          isActive={table.getState().pagination.pageIndex === 0}
+                          className="h-10 min-w-[2.5rem] cursor-pointer rounded-full border-0 px-4 text-sm font-medium data-[active=true]:bg-[#F8F8F8] data-[active=true]:text-gray-900"
+                        >
+                          1
+                        </PaginationLink>
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => table.setPageIndex(1)}
+                          isActive={table.getState().pagination.pageIndex === 1}
+                          className="h-10 min-w-[2.5rem] cursor-pointer rounded-full border-0 px-4 text-sm font-medium data-[active=true]:bg-[#F8F8F8] data-[active=true]:text-gray-900"
+                        >
+                          2
+                        </PaginationLink>
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => table.setPageIndex(2)}
+                          isActive={table.getState().pagination.pageIndex === 2}
+                          className="h-10 min-w-[2.5rem] cursor-pointer rounded-full border-0 px-4 text-sm font-medium data-[active=true]:bg-[#F8F8F8] data-[active=true]:text-gray-900"
+                        >
+                          3
+                        </PaginationLink>
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationEllipsis className="h-10 w-auto px-2 text-sm font-medium text-gray-400" />
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationLink
+                          onClick={() => table.setPageIndex(11)}
+                          isActive={
+                            table.getState().pagination.pageIndex === 11
+                          }
+                          className="h-10 min-w-[2.5rem] cursor-pointer rounded-full border-0 px-4 text-sm font-medium data-[active=true]:bg-[#F8F8F8] data-[active=true]:text-gray-900"
+                        >
+                          12
+                        </PaginationLink>
+                      </PaginationItem>
+
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => table.nextPage()}
+                          className={`h-10 rounded-full px-4 text-sm font-medium text-gray-900 hover:bg-gray-200 ${
+                            !table.getCanNextPage()
+                              ? 'pointer-events-none opacity-50'
+                              : 'cursor-pointer'
+                          }`}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
+    </div>
+  );
+}

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 
 import { Eye, EyeOff } from 'lucide-react';
 
+import BlackButton from '@/components/ui/black-button';
+
 interface SignupFormProps {
   role: 'broker' | 'provider';
 }
@@ -97,12 +99,7 @@ export default function SignupForm({ role }: SignupFormProps) {
         </div>
 
         {/* Continue Button */}
-        <button
-          type="submit"
-          className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-base font-semibold text-white transition-colors hover:bg-gray-800"
-        >
-          Continue
-        </button>
+        <BlackButton type="submit">Continue</BlackButton>
 
         {/* Social Login */}
         <div className="space-y-3">

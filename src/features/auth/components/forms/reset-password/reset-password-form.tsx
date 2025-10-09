@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 
 import { Eye, EyeOff } from 'lucide-react';
 
+import BlackButton from '@/components/ui/black-button';
+
 export default function ResetPasswordForm() {
   const router = useRouter();
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -90,12 +92,7 @@ export default function ResetPasswordForm() {
         </div>
 
         {/* Update Password Button */}
-        <button
-          type="submit"
-          className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-base font-semibold text-white transition-colors hover:bg-gray-800"
-        >
-          Update password
-        </button>
+        <BlackButton type="submit">Update password</BlackButton>
 
         {/* Back to sign in */}
         <Link

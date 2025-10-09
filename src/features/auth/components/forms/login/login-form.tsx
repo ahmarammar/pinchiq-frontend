@@ -3,26 +3,58 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Eye, EyeOff } from 'lucide-react';
 
+import { login } from '@/actions/auth-actions';
+import BlackButton from '@/components/ui/black-button';
+
 export default function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberDevice, setRememberDevice] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', { ...formData, rememberDevice });
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await login(formData.email, formData.password);
+
+      if (response.success) {
+        const callbackUrl = searchParams.get('callbackUrl') || '/provider';
+        router.push(callbackUrl);
+        router.refresh();
+      } else {
+        setError(response.message || 'Login failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="rounded-[32px] bg-white p-8 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Error Message */}
+        {error && (
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {error}
+          </div>
+        )}
+
         {/* Email Address */}
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-900">
@@ -94,12 +126,9 @@ export default function LoginForm() {
         </div>
 
         {/* Sign In Button */}
-        <button
-          type="submit"
-          className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-base font-semibold text-white transition-colors hover:bg-gray-800"
-        >
-          Sign In
-        </button>
+        <BlackButton type="submit" disabled={isLoading}>
+          {isLoading ? 'Signing in...' : 'Sign In'}
+        </BlackButton>
 
         {/* Social Login */}
         <div className="space-y-3">

@@ -22,7 +22,9 @@ export const BorderEffect: React.FC<BorderEffectProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`relative w-fit ${className}`}>
+    <div
+      className={`relative ${className.includes('w-') ? '' : 'w-fit'} ${className}`}
+    >
       <div
         className={`absolute ${borderRadius}`}
         style={{

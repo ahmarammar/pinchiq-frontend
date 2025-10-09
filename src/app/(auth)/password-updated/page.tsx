@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
-
 import { CheckCircle2 } from 'lucide-react';
+
+import BlackButton from '@/components/ui/black-button';
 
 export default function PasswordUpdated() {
   return (
@@ -29,12 +29,9 @@ export default function PasswordUpdated() {
           </p>
 
           {/* Back to Sign In Button */}
-          <Link
-            href="/login"
-            className="w-full rounded-[14px] bg-[#1a1a1a] py-3.5 text-center text-base font-semibold text-white transition-colors hover:bg-gray-800"
-          >
+          <BlackButton onClick={() => (window.location.href = '/login')}>
             Back to sign in
-          </Link>
+          </BlackButton>
         </div>
       </div>
     </div>
