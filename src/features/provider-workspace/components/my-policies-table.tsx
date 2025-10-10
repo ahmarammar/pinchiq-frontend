@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import { MoreVertical } from 'lucide-react';
 
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {
   Pagination,
   PaginationContent,
@@ -138,85 +139,104 @@ const mockPolicies: Policy[] = [
   },
 ];
 
-const columns: ColumnDef<Policy>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Policy',
-    cell: ({ row }) => (
-      <div className="flex items-center gap-3">
-        <span className="text-lg">{row.original.icon}</span>
-        <span className="text-sm font-medium text-gray-900">
-          {row.getValue('name')}
-        </span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => {
-      const status = row.getValue('status') as string;
-      const getStatusColor = (status: string) => {
-        switch (status) {
-          case 'Accepting Bids':
-            return 'bg-[#00C389]';
-          case 'Action Required':
-            return 'bg-[#FF6B9D]';
-          case 'Ready to Renew':
-            return 'bg-[#FFB800]';
-          case 'Completed':
-            return 'bg-[#4A90E2]';
-          default:
-            return 'bg-gray-400';
-        }
-      };
-
-      return (
-        <div className="inline-flex h-[1.875rem] items-center gap-2 rounded-full bg-white px-3">
-          <span
-            className={`h-2 w-2 flex-shrink-0 rounded-full ${getStatusColor(status)}`}
-          ></span>
-          <span className="text-sm leading-none font-medium text-gray-900">
-            {status}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: 'facilities',
-    header: 'Facilities',
-    cell: ({ row }) => (
-      <div className="flex h-[1.875rem] w-[2.4375rem] items-center justify-center gap-2.5 rounded-full bg-white px-3 py-1.5">
-        <span className="text-sm font-medium text-gray-900">
-          {row.getValue('facilities')}
-        </span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'renewalDate',
-    header: 'Renewal date',
-    cell: ({ row }) => (
-      <span className="text-sm text-gray-900">
-        {row.getValue('renewalDate')}
-      </span>
-    ),
-  },
-  {
-    id: 'actions',
-    header: 'Actions',
-    cell: () => (
-      <button className="flex -space-x-3 text-gray-400">
-        <MoreVertical className="h-5 w-5" />
-        <MoreVertical className="h-5 w-5" />
-      </button>
-    ),
-  },
-];
-
 export default function MyPoliciesTable() {
   const [data] = useState<Policy[]>(mockPolicies);
+  const [openDialogRowId, setOpenDialogRowId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const columns: ColumnDef<Policy>[] = [
+    {
+      accessorKey: 'name',
+      header: 'Policy',
+      cell: ({ row }) => (
+        <div className="flex items-center gap-3">
+          <span className="text-lg">{row.original.icon}</span>
+          <span className="text-sm font-medium text-gray-900">
+            {row.getValue('name')}
+          </span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const status = row.getValue('status') as string;
+        const getStatusColor = (status: string) => {
+          switch (status) {
+            case 'Accepting Bids':
+              return 'bg-[#00C389]';
+            case 'Action Required':
+              return 'bg-[#FF6B9D]';
+            case 'Ready to Renew':
+              return 'bg-[#FFB800]';
+            case 'Completed':
+              return 'bg-[#4A90E2]';
+            default:
+              return 'bg-gray-400';
+          }
+        };
+
+        return (
+          <div className="inline-flex h-[1.875rem] items-center gap-2 rounded-full bg-white px-3">
+            <span
+              className={`h-2 w-2 flex-shrink-0 rounded-full ${getStatusColor(status)}`}
+            ></span>
+            <span className="text-sm leading-none font-medium text-gray-900">
+              {status}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'facilities',
+      header: 'Facilities',
+      cell: ({ row }) => (
+        <div className="flex h-[1.875rem] w-[2.4375rem] items-center justify-center gap-2.5 rounded-full bg-white px-3 py-1.5">
+          <span className="text-sm font-medium text-gray-900">
+            {row.getValue('facilities')}
+          </span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'renewalDate',
+      header: 'Renewal date',
+      cell: ({ row }) => (
+        <span className="text-sm text-gray-900">
+          {row.getValue('renewalDate')}
+        </span>
+      ),
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const isThisRowOpen = openDialogRowId === row.original.id;
+
+        return (
+          <div className="relative">
+            <button
+              onClick={() => {
+                if (isThisRowOpen) {
+                  setOpenDialogRowId(null);
+                  setDialogOpen(false);
+                } else {
+                  setOpenDialogRowId(row.original.id);
+                  setDialogOpen(true);
+                }
+              }}
+              className="flex -space-x-3 text-gray-400"
+            >
+              <MoreVertical className="h-5 w-5" />
+              <MoreVertical className="h-5 w-5" />
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
 
   const table = useReactTable({
     data,
@@ -234,17 +254,11 @@ export default function MyPoliciesTable() {
     <div className="items-center justify-center space-y-10 space-x-10">
       {/* Header */}
       <div className="mb-6">
-        <h1
-          className="text-[3.25rem] leading-[100%] font-medium tracking-[-0.04em] text-[#242424] capitalize"
-          style={{ fontFamily: 'Fustat' }}
-        >
+        <h1 className="text-[3.25rem] leading-[100%] font-medium tracking-[-0.04em] text-[#242424] capitalize">
           My Policies
         </h1>
         <div className="flex items-center justify-between">
-          <p
-            className="mt-5 text-base leading-[120%] font-medium text-[#929292]"
-            style={{ fontFamily: 'Fustat' }}
-          >
+          <p className="mt-5 text-base leading-[120%] font-medium text-[#929292]">
             Keep track of your organization's insurance portfolio.
           </p>
           <div className="flex items-center gap-2">
@@ -276,7 +290,7 @@ export default function MyPoliciesTable() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-[#f8f8f8] px-12 py-3">
+      <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-[#f8f8f8] px-12 py-3">
         <Table>
           <TableHeader className="bg-[#F8F8F8]">
             {table.getHeaderGroups().map(headerGroup => (
@@ -288,7 +302,6 @@ export default function MyPoliciesTable() {
                   <TableHead
                     key={header.id}
                     className="px-6 py-3 text-sm leading-[120%] font-medium text-[#7C7C7C]"
-                    style={{ fontFamily: 'Fustat' }}
                   >
                     {header.isPlaceholder
                       ? null
@@ -303,22 +316,103 @@ export default function MyPoliciesTable() {
           </TableHeader>
           <TableBody className="">
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className="border-b border-gray-100 transition-colors hover:bg-gray-50"
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id} className="px-6 py-5">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row, rowIndex) => {
+                const isThisRowOpen = openDialogRowId === row.original.id;
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    className={`border-b border-gray-100 transition-all ${
+                      openDialogRowId && openDialogRowId !== row.original.id
+                        ? 'opacity-60 blur-[2px]'
+                        : ''
+                    } ${
+                      openDialogRowId === row.original.id
+                        ? 'relative z-10 bg-white hover:bg-white'
+                        : 'hover:bg-gray-50'
+                    }`}
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map((cell, cellIndex) => (
+                      <TableCell
+                        key={cell.id}
+                        className={`px-6 py-5 ${cellIndex === 3 ? 'relative' : ''}`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+
+                        {/* Render dialog in the Renewal Date column (index 3) */}
+                        {cellIndex === 3 && isThisRowOpen && dialogOpen && (
+                          <div className="absolute top-full right-2 z-50 mt-2">
+                            <div className="h-[7.625rem] w-[19.875rem] rounded-[2rem] border-0 bg-white p-4 shadow-[0px_4px_60px_0px_rgba(0,0,0,0.05)]">
+                              <div className="flex items-center justify-center gap-6">
+                                <button className="flex flex-col items-center justify-center gap-4 transition-all">
+                                  <svg
+                                    className="h-6 w-6 text-[#525252]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                                    />
+                                  </svg>
+                                  <span className="text-xs leading-[100%] font-semibold text-[#525252]">
+                                    Loss Run
+                                  </span>
+                                </button>
+
+                                <button className="flex flex-col items-center justify-center gap-4 transition-all">
+                                  <svg
+                                    className="h-6 w-6 text-[#525252]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+                                    />
+                                  </svg>
+                                  <span className="text-xs leading-[100%] font-semibold text-[#525252]">
+                                    Start Renewal
+                                  </span>
+                                </button>
+
+                                <button className="flex h-[5.625rem] w-[5.625rem] flex-col items-center justify-center gap-4 rounded-2xl bg-[#F5F5F5] transition-all outline-none hover:bg-[#FAFAFA]">
+                                  <svg
+                                    className="h-6 w-6 text-[#242424]"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                                    />
+                                  </svg>
+                                  <span className="text-xs leading-[100%] font-semibold text-[#242424]">
+                                    Edit Policy
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell
