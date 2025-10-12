@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import Image from 'next/image';
+
 import {
   ColumnDef,
   flexRender,
@@ -21,6 +23,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Table,
   TableBody,
@@ -30,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface Policy {
   id: string;
@@ -143,6 +147,9 @@ export default function MyPoliciesTable() {
   const [data] = useState<Policy[]>(mockPolicies);
   const [openDialogRowId, setOpenDialogRowId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  const totalSteps = 4;
 
   const columns: ColumnDef<Policy>[] = [
     {
@@ -282,9 +289,410 @@ export default function MyPoliciesTable() {
                 />
               </svg>
             </button>
-            <button className="flex h-[2.375rem] items-center justify-center rounded-full bg-[#242424] px-5 text-sm font-semibold text-white hover:bg-gray-800">
-              + Add Policy
-            </button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="flex h-[2.375rem] items-center justify-center rounded-full bg-[#242424] px-5 text-sm font-semibold text-white hover:bg-gray-800">
+                  + Add Policy
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-[1.5rem] border-0 bg-white px-[3.25rem] pt-[3.25rem] pb-8 opacity-100 shadow-[0px_4px_120px_0px_rgba(0,0,0,0.05)]">
+                <div className="space-y-[3.25rem]">
+                  {/* Header */}
+                  <div className="space-y-3">
+                    <h2 className="text-[1.5rem] leading-[120%] font-semibold text-[#242424]">
+                      Add new policy
+                    </h2>
+                    <p className="text-sm leading-[120%] font-normal text-[#929292]">
+                      Provide the required details to create a new insurance
+                      policy for your facility.
+                    </p>
+                    {/* Multi-step Progress Bar */}
+                    <div className="flex gap-2">
+                      {Array.from({ length: totalSteps }).map((_, index) => {
+                        const stepNumber = index + 1;
+                        const isCompleted = stepNumber < currentStep;
+                        const isActive = stepNumber === currentStep;
+
+                        return (
+                          <div
+                            key={stepNumber}
+                            className="relative h-2 w-[213px] overflow-hidden rounded-full bg-[#E5E5E5]"
+                          >
+                            <div
+                              className={`absolute inset-0 h-full rounded-full transition-all duration-500 ease-out ${
+                                isCompleted || isActive
+                                  ? 'w-full bg-gradient-to-r from-[#4A90E2] to-[#5BA3F5]'
+                                  : 'w-0 bg-transparent'
+                              }`}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Form Fields */}
+                  <div className="w-[54.75rem]">
+                    {/* Step 1: Policy Details */}
+                    {currentStep === 1 && (
+                      <>
+                        {/* Policy Name and Link */}
+                        <div className="flex items-start gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                            <svg
+                              className="h-5 w-5 text-gray-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
+                          </div>
+                          <div className="flex flex-col space-y-1">
+                            <input
+                              type="text"
+                              placeholder="Enter policy name"
+                              className="h-8 w-[13.25rem] rounded border-[1.5px] border-[#AFC8F2] px-2 py-1 text-center text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            />
+                            <input
+                              type="url"
+                              placeholder="Add a link to a website"
+                              className="h-6 w-[10.6875rem] rounded border-[1.5px] border-[#AFC8F2] p-1 text-center text-sm text-blue-500 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Two Column Layout */}
+                        <div className="mt-8 grid grid-cols-2 gap-6">
+                          {/* Insured Name */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900">
+                              Insured Name{' '}
+                              <span className="text-blue-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Enter legal name"
+                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            />
+                          </div>
+
+                          {/* Contact Name */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900">
+                              Contact Name{' '}
+                              <span className="text-blue-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="Enter full name"
+                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            />
+                          </div>
+
+                          {/* Contact Phone */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900">
+                              Contact Phone{' '}
+                              <span className="text-blue-500">*</span>
+                            </label>
+                            <input
+                              type="tel"
+                              placeholder="+1 (___) ___-____"
+                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            />
+                          </div>
+
+                          {/* Contact Email */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-900">
+                              Contact Email{' '}
+                              <span className="text-blue-500">*</span>
+                            </label>
+                            <input
+                              type="email"
+                              placeholder="name@example.com"
+                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Step 2: Current Policy */}
+                    {currentStep === 2 && (
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Effective Date */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Effective Date{' '}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="mm/dd/yyyy"
+                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Expiration Date */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Expiration Date{' '}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="mm/dd/yyyy"
+                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Insurance Company */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Insurance Company{' '}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter company name"
+                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Policy Type */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Policy Type <span className="text-blue-500">*</span>
+                          </label>
+                          <Tabs defaultValue="claims-made" className="w-full">
+                            <TabsList className="grid h-auto w-full grid-cols-2 rounded-xl bg-[#F5F5F5] p-1">
+                              <TabsTrigger
+                                value="claims-made"
+                                className="rounded-xl px-4 py-3 text-sm font-normal text-gray-900 transition-all data-[state=active]:bg-white data-[state=active]:font-medium data-[state=active]:text-[#242424] data-[state=active]:shadow-sm"
+                              >
+                                Claims-made
+                              </TabsTrigger>
+                              <TabsTrigger
+                                value="occurrence"
+                                className="rounded-xl px-4 py-3 text-sm font-normal text-gray-900 transition-all data-[state=active]:bg-white data-[state=active]:font-medium data-[state=active]:text-[#242424] data-[state=active]:shadow-sm"
+                              >
+                                Occurrence
+                              </TabsTrigger>
+                            </TabsList>
+                          </Tabs>
+                        </div>
+
+                        {/* Coverage Limit */}
+                        <div className="col-span-2 space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Coverage Limit{' '}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter amount (e.g. $5,000,000)"
+                            className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Deductible */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Deductible <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter amount (e.g. $25,000)"
+                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Premium */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Premium <span className="text-blue-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Enter amount (e.g. $25,000)"
+                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+
+                        {/* Coverage Issues */}
+                        <div className="space-y-4">
+                          <label className="text-sm font-medium text-gray-900">
+                            Coverage Issues{' '}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <RadioGroup
+                            defaultValue="no"
+                            className="flex flex-col gap-4"
+                          >
+                            <div className="mt-4 flex items-center gap-2">
+                              <RadioGroupItem value="no" id="coverage-no" />
+                              <label
+                                htmlFor="coverage-no"
+                                className="cursor-pointer text-sm font-normal text-gray-900"
+                              >
+                                No
+                              </label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem value="yes" id="coverage-yes" />
+                              <label
+                                htmlFor="coverage-yes"
+                                className="cursor-pointer text-sm font-normal text-gray-900"
+                              >
+                                Yes
+                              </label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+
+                        {/* Bankruptcy Filings */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-900">
+                            Bankruptcy Filings{' '}
+                            <span className="text-blue-500">*</span>
+                          </label>
+                          <RadioGroup
+                            defaultValue="no"
+                            className="flex flex-col gap-4"
+                          >
+                            <div className="mt-4 flex items-center gap-2">
+                              <RadioGroupItem value="no" id="coverage-no" />
+                              <label
+                                htmlFor="coverage-no"
+                                className="cursor-pointer text-sm font-normal text-gray-900"
+                              >
+                                No
+                              </label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <RadioGroupItem value="yes" id="coverage-yes" />
+                              <label
+                                htmlFor="coverage-yes"
+                                className="cursor-pointer text-sm font-normal text-gray-900"
+                              >
+                                Yes
+                              </label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 3: Upload Documents */}
+                    {currentStep === 3 && (
+                      <div className="flex flex-col items-center justify-center space-y-6">
+                        {/* Upload Area */}
+                        <div className="flex h-[209px] w-[876px] flex-col items-center justify-center gap-4 rounded-2xl bg-[#F8F8F8] px-8 py-[52px]">
+                          {/* Upload Icon */}
+                          <div className="bg-opacity-10 flex h-16 w-16 items-center justify-center">
+                            <Image
+                              src="/file-icon.svg"
+                              alt="Upload Icon"
+                              width={32}
+                              height={32}
+                            />
+                          </div>
+
+                          {/* Upload Text */}
+                          <div className="text-center">
+                            <h3 className="text-lg font-semibold text-[#242424]">
+                              Upload Documents
+                            </h3>
+                            <p className="mt-2 text-sm text-[#929292]">
+                              Drag & drop or
+                              <button className="px-1 font-medium text-[#4A90E2] hover:underline">
+                                click to upload
+                              </button>
+                              Loss Run (PDF)
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Disclaimer Text */}
+                        <div className="max-w-2xl text-center">
+                          <p className="text-xs leading-relaxed text-[#929292]">
+                            Uploaded documents must not include personally
+                            identifiable health information (PHI) unless
+                            authorized under HIPAA or relevant laws. By
+                            uploading, you confirm your right to share these
+                            materials for insurance underwriting purposes.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Step 4: Review & Submit */}
+                    {currentStep === 4 && (
+                      <div className="space-y-6">
+                        <h3 className="text-lg font-semibold text-[#242424]">
+                          Review & Submit
+                        </h3>
+                        <div className="space-y-4">
+                          <div className="rounded-xl border border-[#F0F0F0] bg-gray-50 p-6">
+                            <p className="text-sm text-[#929292]">
+                              Review all the information you've entered and
+                              submit your policy.
+                            </p>
+                            <div className="mt-4 space-y-2">
+                              <p className="text-sm font-medium text-gray-900">
+                                Policy will be created with the information
+                                provided in previous steps.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {/* Footer Buttons */}
+                    <div className="flex items-center justify-between pt-4">
+                      <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
+                        Save as Draft
+                      </button>
+                      <div className="flex gap-3">
+                        {currentStep > 1 ? (
+                          <button
+                            onClick={() => setCurrentStep(currentStep - 1)}
+                            className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50"
+                          >
+                            Go Back
+                          </button>
+                        ) : (
+                          <DialogTrigger asChild>
+                            <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
+                              Cancel
+                            </button>
+                          </DialogTrigger>
+                        )}
+                        {currentStep < totalSteps ? (
+                          <button
+                            onClick={() => setCurrentStep(currentStep + 1)}
+                            className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] bg-[#4A90E2] px-8 py-4 text-sm font-medium text-white transition-colors hover:bg-[#3A7BC8]"
+                          >
+                            Continue
+                          </button>
+                        ) : (
+                          <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] bg-[#4A90E2] px-8 py-4 text-sm font-medium text-white transition-colors hover:bg-[#3A7BC8]">
+                            Submit
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
