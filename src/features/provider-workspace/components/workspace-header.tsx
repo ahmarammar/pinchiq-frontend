@@ -48,13 +48,19 @@ export default function WorkspaceHeader({
           {/* Right Section */}
           <div className="flex shrink-0 items-center gap-6">
             {/* Inbox */}
-            <button className="relative flex items-center gap-2 text-white transition-colors hover:text-white/80">
+            <button
+              className="relative flex items-center rounded-full text-white transition-colors hover:text-white/80"
+              style={{
+                width: '77px',
+                height: '34px',
+                padding: '10px 14px 10px 20px',
+                gap: '2px',
+                background: 'rgba(255, 255, 255, 0.15)',
+              }}
+            >
               <span className="text-sm font-medium">Inbox</span>
               <div className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
-                  3
-                </span>
+                <span className="mb-2 ml-1 flex h-2 w-2 rounded-full bg-green-400"></span>
               </div>
             </button>
 
