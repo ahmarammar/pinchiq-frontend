@@ -295,7 +295,7 @@ export default function MyPoliciesTable() {
                   + Add Policy
                 </button>
               </DialogTrigger>
-              <DialogContent className="max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-[1.5rem] border-0 bg-white px-[3.25rem] pt-[3.25rem] pb-8 opacity-100 shadow-[0px_4px_120px_0px_rgba(0,0,0,0.05)]">
+              <DialogContent className="scrollbar-hide max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-[1.5rem] border-0 bg-white px-[3.25rem] pt-[3.25rem] pb-8 opacity-100 shadow-[0px_4px_120px_0px_rgba(0,0,0,0.05)]">
                 <div className="space-y-[3.25rem]">
                   {/* Header */}
                   <div className="space-y-3">
@@ -633,61 +633,467 @@ export default function MyPoliciesTable() {
                       </div>
                     )}
 
-                    {/* Step 4: Review & Submit */}
+                    {/* Step 4: Facility Setup */}
                     {currentStep === 4 && (
-                      <div className="space-y-6">
-                        <h3 className="text-lg font-semibold text-[#242424]">
-                          Review & Submit
-                        </h3>
-                        <div className="space-y-4">
-                          <div className="rounded-xl border border-[#F0F0F0] bg-gray-50 p-6">
-                            <p className="text-sm text-[#929292]">
-                              Review all the information you've entered and
-                              submit your policy.
-                            </p>
-                            <div className="mt-4 space-y-2">
-                              <p className="text-sm font-medium text-gray-900">
-                                Policy will be created with the information
-                                provided in previous steps.
-                              </p>
+                      <div className="space-y-8">
+                        {/* Basic Information */}
+                        <div>
+                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
+                            Basic Information
+                          </h3>
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-gray-900">
+                                Facility Name{' '}
+                                <span className="text-blue-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="Green Valley Nursing Home"
+                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-gray-900">
+                                Facility Address{' '}
+                                <span className="text-blue-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="321 Main Street, Southfield, IL 62704"
+                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-gray-900">
+                                Website
+                              </label>
+                              <input
+                                type="url"
+                                placeholder="www.greenvalleynursing.com"
+                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-gray-900">
+                                CMS Provider ID{' '}
+                                <span className="text-blue-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                placeholder="445721"
+                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              />
                             </div>
                           </div>
+                        </div>
+
+                        {/* Bed Capacity */}
+                        <div>
+                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
+                            Bed Capacity
+                          </h3>
+                          <div className="space-y-4">
+                            {/* Bed Type 1 */}
+                            <div className="grid grid-cols-[1fr_200px_200px_40px] items-start gap-4">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Bed Type{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <select className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                                  <option>
+                                    Skilled Nursing Facility (SNF)
+                                  </option>
+                                </select>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Licensed{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="120"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Occupied{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="110"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="mt-8 flex items-end">
+                                <button className="flex -space-x-3 text-gray-400">
+                                  <MoreVertical className="h-5 w-5" />
+                                  <MoreVertical className="h-5 w-5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Bed Type 2 */}
+                            <div className="grid grid-cols-[1fr_200px_200px_40px] items-start gap-4">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Bed Type{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <select className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                                  <option>Assisted Living (ALF)</option>
+                                </select>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Licensed{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="60"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Occupied{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="55"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="mt-8 flex items-end">
+                                <button className="flex -space-x-3 text-gray-400">
+                                  <MoreVertical className="h-5 w-5" />
+                                  <MoreVertical className="h-5 w-5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Bed Type 3 */}
+                            <div className="grid grid-cols-[1fr_200px_200px_40px] items-start gap-4">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Bed Type{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <select className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                                  <option>Memory Care / Dementia Unit</option>
+                                </select>
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Licensed{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="40"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Occupied{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="number"
+                                  placeholder="32"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="mt-8 flex items-end">
+                                <button className="flex -space-x-3 text-gray-400">
+                                  <MoreVertical className="h-5 w-5" />
+                                  <MoreVertical className="h-5 w-5" />
+                                </button>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-center gap-4">
+                              <div className="h-[1px] flex-1 bg-gray-200"></div>
+                              <button className="flex items-center gap-2 rounded-lg bg-[#F5F8FB] px-4 py-2 text-sm font-medium text-[#4A90E2] hover:bg-[#E8F1F8]">
+                                <span className="text-lg">+</span>
+                                <span>Add another bed type</span>
+                              </button>
+                              <div className="h-[1px] flex-1 bg-gray-200"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Ownership */}
+                        <div>
+                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
+                            Ownership
+                          </h3>
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Owner of Facility{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="Healthcare Partners LLC"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  How Long Owned
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="6 years"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Other Owned Facilities
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="Sunrise Rehabilitation Center"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Facility ID{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="22495"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+                            <div className="mt-4 flex items-center justify-center gap-4">
+                              <div className="h-[1px] flex-1 bg-gray-200"></div>
+                              <button className="flex items-center gap-2 rounded-lg bg-[#F5F8FB] px-4 py-2 text-sm font-medium text-[#4A90E2] hover:bg-[#E8F1F8]">
+                                <span className="text-lg">+</span>
+                                <span>Add another owner</span>
+                              </button>
+                              <div className="h-[1px] flex-1 bg-gray-200"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Management Company */}
+                        <div>
+                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
+                            Management Company
+                          </h3>
+                          <div className="space-y-4">
+                            <div className="space-y-2">
+                              <label className="text-sm font-medium text-gray-900">
+                                Managed by Company?{' '}
+                                <span className="text-blue-500">*</span>
+                              </label>
+                              <RadioGroup
+                                defaultValue="yes"
+                                className="mt-2 flex gap-12"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <RadioGroupItem
+                                    value="yes"
+                                    id="managed-yes"
+                                  />
+                                  <label
+                                    htmlFor="managed-yes"
+                                    className="cursor-pointer text-sm font-normal text-gray-900"
+                                  >
+                                    Yes
+                                  </label>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <RadioGroupItem value="no" id="managed-no" />
+                                  <label
+                                    htmlFor="managed-no"
+                                    className="cursor-pointer text-sm font-normal text-gray-900"
+                                  >
+                                    No
+                                  </label>
+                                </div>
+                              </RadioGroup>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Management Company Name{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="MediCare Management Group"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  How Long Managed
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="7 years"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Other Managed Facilities
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="HillSide Memory Care"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-900">
+                                  Facility ID{' '}
+                                  <span className="text-blue-500">*</span>
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="33306"
+                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="mt-4 flex items-center justify-center gap-4">
+                              <div className="h-[1px] flex-1 bg-gray-200"></div>
+                              <button className="flex items-center gap-2 rounded-lg bg-[#F5F8FB] px-4 py-2 text-sm font-medium text-[#4A90E2] hover:bg-[#E8F1F8]">
+                                <span className="text-lg">+</span>
+                                <span>Add another management company</span>
+                              </button>
+                              <div className="h-[1px] flex-1 bg-gray-200"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Agreement Checkbox */}
+                        <div className="flex items-start gap-3 rounded-xl bg-gray-50 p-4">
+                          <input
+                            type="radio"
+                            id="agreement"
+                            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+                          />
+                          <label
+                            htmlFor="agreement"
+                            className="text-xs text-gray-600"
+                          >
+                            By submitting this facility data, I acknowledge that
+                            I am authorized to do so and accept the{' '}
+                            <a
+                              href="#"
+                              className="font-medium text-blue-500 hover:underline"
+                            >
+                              Provider Submission Agreement
+                            </a>
+                            , including rules on disclosures, confidentiality,
+                            and compliance.
+                          </label>
                         </div>
                       </div>
                     )}
                     {/* Footer Buttons */}
-                    <div className="flex items-center justify-between pt-4">
-                      <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
-                        Save as Draft
-                      </button>
-                      <div className="flex gap-3">
-                        {currentStep > 1 ? (
-                          <button
-                            onClick={() => setCurrentStep(currentStep - 1)}
-                            className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50"
-                          >
-                            Go Back
+                    <div className="flex items-center justify-between pt-8">
+                      {currentStep === 4 ? (
+                        <>
+                          <button className="flex h-[46px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
+                            Save as Draft
                           </button>
-                        ) : (
-                          <DialogTrigger asChild>
-                            <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
-                              Cancel
+                          <div className="flex gap-3">
+                            <button
+                              onClick={() => setCurrentStep(currentStep - 1)}
+                              className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50"
+                            >
+                              Go Back
                             </button>
-                          </DialogTrigger>
-                        )}
-                        {currentStep < totalSteps ? (
-                          <button
-                            onClick={() => setCurrentStep(currentStep + 1)}
-                            className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] bg-[#4A90E2] px-8 py-4 text-sm font-medium text-white transition-colors hover:bg-[#3A7BC8]"
-                          >
-                            Continue
+                            <button className="flex h-[46px] w-[209px] items-center justify-center gap-2 rounded-[100px] bg-[#F8F8F8] px-4 py-2 text-sm font-medium text-[#4A90E2] transition-colors hover:bg-[#DBEAFE]">
+                              <span>Save Policy</span>
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 9l-7 7-7-7"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
+                            Save as Draft
                           </button>
-                        ) : (
-                          <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] bg-[#4A90E2] px-8 py-4 text-sm font-medium text-white transition-colors hover:bg-[#3A7BC8]">
-                            Submit
-                          </button>
-                        )}
-                      </div>
+                          <div className="flex gap-3">
+                            {currentStep > 1 ? (
+                              <button
+                                onClick={() => setCurrentStep(currentStep - 1)}
+                                className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50"
+                              >
+                                Go Back
+                              </button>
+                            ) : (
+                              <DialogTrigger asChild>
+                                <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
+                                  Cancel
+                                </button>
+                              </DialogTrigger>
+                            )}
+                            <button
+                              onClick={() => setCurrentStep(currentStep + 1)}
+                              className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] bg-[#4A90E2] px-8 py-4 text-sm font-medium text-white transition-colors hover:bg-[#3A7BC8]"
+                            >
+                              Continue
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
