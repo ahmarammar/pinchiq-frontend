@@ -2,56 +2,46 @@
 
 import { useState } from 'react';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
 import { Eye, EyeOff } from 'lucide-react';
 
-import BlackButton from '@/components/ui/black-button';
+import { Button } from '@/components/ui/button';
 
-export default function ResetPasswordForm() {
-  const router = useRouter();
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+export default function ResetPasswordForm({}) {
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    newPassword: '',
+    password: '',
     confirmPassword: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Password reset submitted:', formData);
-    // Navigate to success page
-    router.push('/password-updated');
   };
 
   return (
-    <div className="rounded-[32px] bg-white p-8 shadow-xl">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* New Password */}
+    <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+      <form onSubmit={handleSubmit}>
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-900">
+          <label className="mb-2 block text-xl leading-tight font-medium tracking-normal text-black">
             New Password
           </label>
           <div className="relative">
             <input
-              type={showNewPassword ? 'text' : 'password'}
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
-              value={formData.newPassword}
+              value={formData.password}
               onChange={e =>
-                setFormData({ ...formData, newPassword: e.target.value })
+                setFormData({ ...formData, password: e.target.value })
               }
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+              className={`${showPassword ? 'text-xl tracking-normal' : 'text-6xl tracking-[0.3em]'} border-light-neutral-500 placeholder:text-dark-neutral-200 h-11-5 w-full rounded-xl border bg-white px-4 leading-tight font-medium text-black placeholder:text-6xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-[0.3em] focus:outline-none`}
               required
               minLength={8}
             />
             <button
               type="button"
-              onClick={() => setShowNewPassword(!showNewPassword)}
-              className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-dark-neutral-600 hover:text-dark-neutral-600/90 absolute top-1/2 right-4 -translate-y-1/2"
             >
-              {showNewPassword ? (
+              {showPassword ? (
                 <EyeOff className="h-5 w-5" />
               ) : (
                 <Eye className="h-5 w-5" />
@@ -59,48 +49,38 @@ export default function ResetPasswordForm() {
             </button>
           </div>
         </div>
-
-        {/* Confirm Password */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-900">
+        <div className="mt-7">
+          <label className="mb-2 block text-xl leading-tight font-medium tracking-normal text-black">
             Confirm Password
           </label>
           <div className="relative">
             <input
-              type={showConfirmPassword ? 'text' : 'password'}
+              type="password"
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={e =>
                 setFormData({ ...formData, confirmPassword: e.target.value })
               }
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+              className={`border-light-neutral-500 placeholder:text-dark-neutral-200 h-11-5 w-full rounded-xl border bg-white px-4 text-6xl leading-tight font-medium tracking-[0.3em] text-black placeholder:text-6xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-[0.3em] focus:outline-none`}
               required
               minLength={8}
             />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute top-1/2 right-4 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            >
-              {showConfirmPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
           </div>
         </div>
-
-        {/* Update Password Button */}
-        <BlackButton type="submit">Update password</BlackButton>
-
-        {/* Back to sign in */}
-        <Link
-          href="/login"
-          className="block w-full text-center text-base font-medium text-gray-900 transition-colors hover:text-gray-700"
+        <Button
+          type="submit"
+          variant={'inverse'}
+          className="h-11-5 mt-7 w-full text-xl"
+        >
+          Update password
+        </Button>
+        <Button
+          type="submit"
+          variant={'muted'}
+          className="h-11-5 mt-2 w-full text-xl"
         >
           Back to sign in
-        </Link>
+        </Button>
       </form>
     </div>
   );

@@ -2,51 +2,47 @@
 
 import { useState } from 'react';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
-import BlackButton from '@/components/ui/black-button';
-
-export default function ForgotPasswordForm() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
+export default function ForgotPasswordForm({}) {
+  const [formData, setFormData] = useState({
+    email: '',
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Password reset requested for:', email);
-    // Navigate to verify email page
-    router.push('/verify-email');
   };
 
   return (
-    <div className="rounded-[32px] bg-white p-8 shadow-xl">
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Email Address */}
+    <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+      <form onSubmit={handleSubmit}>
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-900">
-            Email Address <span className="text-red-500">*</span>
+          <label className="mb-2 block text-xl leading-tight font-medium tracking-normal text-black">
+            Email Address <span className="text-dark-blue">*</span>
           </label>
           <input
             type="email"
             placeholder="Enter your email address"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+            value={formData.email}
+            onChange={e => setFormData({ ...formData, email: e.target.value })}
+            className="border-light-neutral-500 placeholder:text-dark-neutral-400 h-11-5 w-full rounded-xl border bg-white px-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
             required
           />
         </div>
-
-        {/* Reset Password Button */}
-        <BlackButton type="submit">Reset password</BlackButton>
-
-        {/* Back to sign in */}
-        <Link
-          href="/login"
-          className="block w-full rounded-[14px] border border-gray-200 bg-white py-3.5 text-center text-base font-medium text-gray-900 transition-colors hover:bg-gray-50"
+        <Button
+          type="submit"
+          variant={'inverse'}
+          className="h-11-5 mt-7 w-full text-xl"
+        >
+          Reset password
+        </Button>
+        <Button
+          type="submit"
+          variant={'muted'}
+          className="h-11-5 mt-2 w-full text-xl"
         >
           Back to sign in
-        </Link>
+        </Button>
       </form>
     </div>
   );

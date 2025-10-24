@@ -299,7 +299,7 @@ export default function MyPoliciesTable() {
                 <div className="space-y-[3.25rem]">
                   {/* Header */}
                   <div className="space-y-3">
-                    <h2 className="text-[1.5rem] leading-[120%] font-semibold text-[#242424]">
+                    <h2 className="text-6xl leading-[120%] font-semibold text-[#242424]">
                       Add new policy
                     </h2>
                     <p className="text-sm leading-[120%] font-normal text-[#929292]">

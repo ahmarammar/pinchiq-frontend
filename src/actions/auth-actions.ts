@@ -53,7 +53,6 @@ export async function login(
           email: mockUser.email,
           name: mockUser.name,
           role: mockUser.role,
-          twoFactorEnabled: false, // Will be updated after 2FA check
         },
       };
 

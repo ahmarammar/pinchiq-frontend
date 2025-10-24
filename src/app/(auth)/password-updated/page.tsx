@@ -1,39 +1,32 @@
 'use client';
 
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, CircleCheckBig } from 'lucide-react';
 
 import BlackButton from '@/components/ui/black-button';
+import { Button } from '@/components/ui/button';
 
 export default function PasswordUpdated() {
   return (
-    <div className="mt-8 w-full space-y-5">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="mb-2 text-6xl text-white">Updated Successfully</h1>
-        <p className="text-base text-white/90">
-          You can now sign in with your new password.
-        </p>
-      </div>
-
-      {/* Success Card */}
-      <div className="rounded-[32px] bg-white p-8 shadow-xl">
-        <div className="flex flex-col items-center space-y-6 py-6">
-          {/* Success Icon */}
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-50">
-            <CheckCircle2 className="h-12 w-12 text-blue-600" />
+    <>
+      <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+        <div className="flex flex-col items-center space-y-9">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white">
+            <CircleCheckBig className="text-brand-blue-700 h-10 w-10" />
           </div>
 
-          {/* Success Message */}
-          <p className="text-center text-base font-medium text-blue-600">
+          <p className="text-brand-blue-700 -mt-9 max-w-48 text-center text-3xl leading-snug font-semibold tracking-normal">
             Your password has been changed
           </p>
 
-          {/* Back to Sign In Button */}
-          <BlackButton onClick={() => (window.location.href = '/login')}>
+          <Button
+            type="submit"
+            variant={'inverse'}
+            className="h-11-5 mt-2 w-full text-xl"
+          >
             Back to sign in
-          </BlackButton>
+          </Button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

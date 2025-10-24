@@ -1,7 +1,9 @@
 export const AUTH_TOKEN_KEY = process.env.AUTH_TOKEN_KEY || 'auth_token';
-export const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY || 'refresh_token';
+export const REFRESH_TOKEN_KEY =
+  process.env.REFRESH_TOKEN_KEY || 'refresh_token';
 export const USER_DATA_KEY = process.env.USER_DATA_KEY || 'user_data';
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 export const COOKIE_OPTIONS = {
   maxAge: 60 * 60 * 24 * 7,
@@ -10,12 +12,6 @@ export const COOKIE_OPTIONS = {
   path: '/',
   httpOnly: true,
 };
-
-export const DATE_FORMATS = {
-  ISO_8601_EXTENDED: 'YYYY-MM-DDTHH:mm:ssZ',
-  ISO_8601_DATE_ONLY: 'YYYY-MM-DD',
-  ISO_8601_BASIC: 'YYYYMMDDTHHmmssZ',
-} as const;
 
 export const MOCK_USERS = [
   {

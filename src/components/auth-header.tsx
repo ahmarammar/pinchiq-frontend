@@ -1,32 +1,54 @@
-import Image from 'next/image';
-import Link from 'next/link';
+'use client';
 
-import AuthButton from './ui/auth-button';
-import { BorderEffect } from './ui/border-effect';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+
+import { Button } from './ui/button';
 
 export default function AuthHeader() {
+  const router = useRouter();
+  const pathname = usePathname();
   return (
-    <BorderEffect className="fixed left-1/2 z-50 -translate-x-1/2">
-      <div className="flex h-[60px] items-center justify-between gap-[52px] rounded-[100px] bg-[#5e8dd9] py-2 pr-2 pl-8 backdrop-blur-md">
+    <div className="fixed left-1/2 z-50 mt-4 -translate-x-1/2">
+      <div className="bg-button-glass flex h-13 items-center justify-between gap-13 rounded-[6.25rem] py-2 pr-2.5 pl-8 backdrop-blur-md">
         <div className="flex items-center gap-2">
           <Image
             src="/logo.svg"
             alt="Pinch IQ Logo"
             width={63}
-            height={16}
+            height={18}
             priority
           />
         </div>
 
-        <div className="flex items-center gap-3">
-          <AuthButton href="/login" variant="secondary">
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => {
+              router.push('/login');
+            }}
+            variant={
+              pathname.startsWith('/login') ||
+              pathname.startsWith('/reset-password') ||
+              pathname.startsWith('/password-updated') ||
+              pathname.startsWith('/forgot-password')
+                ? 'secondary'
+                : 'lighter'
+            }
+            className="min-w-20 text-xl"
+          >
             Log In
-          </AuthButton>
-          <AuthButton href="/signup" variant="secondary">
+          </Button>
+          <Button
+            onClick={() => {
+              router.push('/signup');
+            }}
+            variant={pathname.startsWith('/signup') ? 'secondary' : 'lighter'}
+            className="min-w-20 text-xl"
+          >
             Sign Up
-          </AuthButton>
+          </Button>
         </div>
       </div>
-    </BorderEffect>
+    </div>
   );
 }

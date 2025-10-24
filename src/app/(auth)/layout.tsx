@@ -13,15 +13,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div
-      className="min-h-screen pt-4"
-      style={{
-        background: 'linear-gradient(0.05deg, #D4E3F8 0.04%, #6394DE 99.96%)',
-      }}
-    >
+    <div className="background-linear relative">
       <AuthHeader />
-      <div className="flex min-h-screen items-center justify-center py-8">
-        <div className="w-full max-w-xl px-4">{children}</div>
+      <div className="flex h-full min-h-screen items-center justify-center pt-32 pb-12">
+        <div className="w-full max-w-3xl px-4">{children}</div>
       </div>
     </div>
   );
