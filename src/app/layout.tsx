@@ -18,7 +18,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/icon.png" sizes="any" />
       </head>
-      <body className={`${fustat.className} antialiased`}>
+      <body
+        className={`${fustat.className} background-linear relative antialiased`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -1,20 +1,30 @@
+import { ReactNode } from 'react';
+
 import type { Metadata } from 'next';
 
-import WorkspaceLayout from '@/features/provider-workspace/components/workspace-layout';
+import WorkspaceHeader from '@/features/provider/components/workspace-header';
 
 export const metadata: Metadata = {
-  title: 'Provider Dashboard - Pinchiq',
+  title: 'Provider Dashboard - PinchIQ',
   description: 'Provider dashboard for managing your services',
 };
 
-export default function ProviderLayout({
+interface ProviderWorkspaceLayoutProps {
+  children: ReactNode;
+}
+
+export default function ProviderWorkspaceLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: ProviderWorkspaceLayoutProps) {
   return (
-    <WorkspaceLayout userName="Int. Technologies" userRole="Admin Account">
-      {children}
-    </WorkspaceLayout>
+    <div className="relative flex min-h-screen flex-col">
+      <WorkspaceHeader
+        userName={'Int. Technologies'}
+        userRole={'Admin Account'}
+      />
+      <main className="w-full flex-1 rounded-tl-4xl rounded-tr-4xl bg-white px-22 py-16">
+        {children}
+      </main>
+    </div>
   );
 }

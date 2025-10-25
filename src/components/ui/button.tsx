@@ -25,7 +25,7 @@ const buttonVariants = cva(
         inverse:
           'text-white text-3xl font-bold leading-tight tracking-normal bg-black rounded-[6.25rem] hover:bg-black/90 active:scale-95 disabled:bg-light-neutral-300 disabled:text-black disabled:opacity-100',
         muted:
-          'text-black text-3xl font-bold leading-tight tracking-normal bg-gray rounded-[6.25rem] hover:bg-gray/80 active:scale-95',
+          'text-black text-3xl font-bold leading-tight tracking-normal bg-gray rounded-[6.25rem] hover:bg-light-neutral-300 active:scale-95',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

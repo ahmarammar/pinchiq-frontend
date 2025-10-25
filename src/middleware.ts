@@ -8,6 +8,7 @@ import { User } from '@/types/auth.types';
 import { AUTH_TOKEN_KEY, USER_DATA_KEY } from '@/utils/app-constants';
 
 export async function middleware(request: NextRequest) {
+  return NextResponse.next();
   const { pathname } = request.nextUrl;
 
   const authToken = request.cookies.get(AUTH_TOKEN_KEY)?.value;

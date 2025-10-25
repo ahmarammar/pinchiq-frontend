@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import AuthHeader from '@/components/auth-header';
+import AuthHeader from '@/features/auth/components/auth-header';
 
 export const metadata: Metadata = {
   title: 'Auth - Pinchiq',
@@ -13,7 +13,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="background-linear relative">
+    <div>
       <AuthHeader />
       <div className="flex h-full min-h-screen items-center justify-center pt-32 pb-12">
         <div className="w-full max-w-3xl px-4">{children}</div>

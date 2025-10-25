@@ -1,9 +1,5 @@
-import MyPoliciesTable from '@/features/provider-workspace/components/my-policies-table';
+import MyPoliciesTable from '@/features/provider/components/my-policies-table';
 
 export default async function ProviderDashboardPage() {
-  return (
-    <div className="">
-      <MyPoliciesTable />
-    </div>
-  );
+  return <MyPoliciesTable />;
 }

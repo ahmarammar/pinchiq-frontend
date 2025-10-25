@@ -5,7 +5,16 @@
 
 @theme inline {
   --spacing-11-5: 2.875rem /* 46px */;
+  --spacing-12-5: 3.125rem /* 50px */;
+  --spacing-4-5: 1.125rem /* 18px */;
+  --spacing-8-5: 2.125rem /* 34px */;
   --spacing-5-5: 1.375rem /* 22px */;
+  --spacing-0-25: 0.063rem /* 1px */;
+  --spacing-1-25: 0.313rem /* 5px */;
+  --spacing-9-5: 2.375rem /* 38px */;
+  --spacing-22: 5.5rem /* 88px */;
+  --spacing-7-5: 1.875rem /* 30px */;
+  --spacing-15: 3.75rem /* 60px */;
 
   /* Font Sizes */
   --text-xs: 0.5rem /* 8px */;
@@ -36,6 +45,7 @@
   --leading-tight: 100%;
   --leading-snug: 120%;
   --leading-normal: 140%;
+  --leading-medium: 1.125rem /* 18px */;
   --leading-relaxed: 1.25rem /* 20px */;
   --leading-loose: 1.288rem /* 20.61px */;
   --leading-extra: 1.5rem /* 24px */;
@@ -65,11 +75,17 @@
   --color-dark-neutral-600: #666666;
   --color-dark-neutral-500: #7c7c7c;
   --color-dark-neutral-200: #bdbdbd;
+  --color-dark-neutral-300: #a7a7a7;
   --color-dark-neutral-400: #929292;
   --color-light-neutral-500: #e0e0e0;
+  --color-light-neutral-100: #fafafa;
   --color-light-neutral-400: #e8e8e8;
   --color-light-neutral-300: #f0f0f0;
   --color-brand-blue-700: #3f7fdc;
+  --color-success-200: #abefc6;
+  --color-success-400: #47cd89;
+  --color-pink-400: #f670c7;
+  --color-warning-300: #fec84b;
 }
 
 .background-linear {
