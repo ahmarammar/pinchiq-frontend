@@ -18,11 +18,13 @@ export default function ProviderWorkspaceLayout({
 }: ProviderWorkspaceLayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col">
-      <WorkspaceHeader
-        userName={'Int. Technologies'}
-        userRole={'Admin Account'}
-      />
-      <main className="w-full flex-1 rounded-tl-4xl rounded-tr-4xl bg-white px-22 py-16">
+      <div className="sticky top-0 right-0 left-0 z-[50]">
+        <WorkspaceHeader
+          userName={'Int. Technologies'}
+          userRole={'Admin Account'}
+        />
+      </div>
+      <main className="relative w-full flex-1 rounded-tl-4xl rounded-tr-4xl bg-white px-22 py-16">
         {children}
       </main>
     </div>

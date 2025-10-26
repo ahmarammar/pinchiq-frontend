@@ -16,7 +16,7 @@ export default function RoleTabs({ value, onValueChange }: RoleTabsProps) {
       onValueChange={onValueChange as (value: string) => void}
     >
       <Tabs.List className="bg-button-glass flex gap-1 rounded-[6.25rem] p-1.5 backdrop-blur-sm">
-        <Tabs.Trigger value="broker">
+        <Tabs.Trigger value="broker" asChild>
           <Button
             variant={value === 'broker' ? 'secondary' : 'ghost'}
             className={`text-xl ${value === 'broker' ? '' : 'text-white'}`}
@@ -24,7 +24,7 @@ export default function RoleTabs({ value, onValueChange }: RoleTabsProps) {
             I'm Broker
           </Button>
         </Tabs.Trigger>
-        <Tabs.Trigger value="provider">
+        <Tabs.Trigger value="provider" asChild>
           <Button
             variant={value === 'provider' ? 'secondary' : 'ghost'}
             className={`text-xl ${value === 'provider' ? '' : 'text-white'}`}

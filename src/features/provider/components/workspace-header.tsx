@@ -25,7 +25,7 @@ export default function WorkspaceHeader({
   return (
     <div className="w-full overflow-hidden">
       <DesktopNavbar className="relative top-0 w-full p-2">
-        <DesktopNavBody className="h-12-5 bg-button-glass w-full overflow-hidden rounded-[6.25rem] px-8 py-4 shadow-xs shadow-white/5 backdrop-blur-md">
+        <DesktopNavBody className="h-12-5 w-full overflow-hidden rounded-[6.25rem] bg-[#5b8ad6] px-8 py-4 shadow-xs shadow-white/5 backdrop-blur-md">
           <div className="flex shrink-0 items-center">
             <Logo />
           </div>

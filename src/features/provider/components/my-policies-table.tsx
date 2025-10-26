@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -12,17 +12,24 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  Building2,
   ChevronDown,
   Instagram,
   MoreVertical,
   Plus,
+  Trash2,
+  XIcon,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -32,10 +39,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import PageSizeControl from './page-size-control';
 import { Pagination } from './pagination';
+import PolicyTypeTabs from './policy-type-tabs';
 
 interface Policy {
   id: string;
@@ -153,6 +160,169 @@ export default function MyPoliciesTable() {
   const [pageSize, setPageSize] = useState<'10 items' | '20' | 'Scroll'>(
     '10 items'
   );
+  const [policyType, setPolicyType] = useState<'Claims-made' | 'Occurrence'>(
+    'Claims-made'
+  );
+  const [addNewPolicyFormData, setAddNewPolicyFormData] = useState({
+    policyName: '',
+    policyLink: '',
+    insuredName: '',
+    contactName: '',
+    contactPhone: '',
+    contactEmail: '',
+  });
+  const [uploadedLogo, setUploadedLogo] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const lossRunInputRef = useRef<HTMLInputElement>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<
+    Array<{
+      id: string;
+      name: string;
+      size: number;
+      uploadedAt: Date;
+      fileType: string;
+    }>
+  >([]);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        setUploadedLogo(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileUpload = (files: FileList | null) => {
+    if (!files) return;
+
+    const newFiles = Array.from(files).map(file => {
+      const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'file';
+      return {
+        id: Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        size: file.size,
+        uploadedAt: new Date(),
+        fileType: fileExtension,
+      };
+    });
+
+    setUploadedFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const handleFileInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    handleFileUpload(event.target.files);
+    event.target.value = '';
+  };
+
+  const handleFileClick = () => {
+    lossRunInputRef.current?.click();
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFileUpload(e.dataTransfer.files);
+  };
+
+  const handleDeleteFile = (id: string) => {
+    setUploadedFiles(prev => prev.filter(lossRun => lossRun.id !== id));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
+  const formatUploadDate = (date: Date) => {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${month} ${day}, ${year} ${hours}:${minutes}`;
+  };
+
+  const [currentPolicyFormData, setCurrentPolicyFormData] = useState({
+    effectiveDate: '',
+    expirationDate: '',
+    insuranceCompany: '',
+    coverageLimit: '',
+    retroactiveDate: '',
+    deductible: '',
+    premium: '',
+    coverageIssues: '',
+    bankruptcyFilings: '',
+  });
+  const [facilitySetupFormData, setFacilitySetupFormData] = useState({
+    iAgree: '',
+    basicInformation: {
+      facilityName: '',
+      facilityAddress: '',
+      website: '',
+      cmsProviderID: '',
+    },
+    bedCapacity: [
+      {
+        bedType: '',
+        licensedBeds: '',
+        occupiedBeds: '',
+      },
+    ],
+    ownership: [
+      {
+        ownerName: '',
+        howLongOwned: '',
+        otherOwnedFacilities: '',
+        facilityID: '',
+      },
+    ],
+    managementCompany: [
+      {
+        managedByCompany: '',
+        managementCompanyName: '',
+        howLongManaged: '',
+        otherManagedFacilities: '',
+        facilityID: '',
+      },
+    ],
+  });
 
   const totalSteps = 4;
 
@@ -341,119 +511,211 @@ export default function MyPoliciesTable() {
                   <span>Add Policy</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="scrollbar-hide max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-[1.5rem] border-0 bg-white px-[3.25rem] pt-[3.25rem] pb-8 opacity-100 shadow-[0px_4px_120px_0px_rgba(0,0,0,0.05)]">
-                <div className="space-y-[3.25rem]">
-                  <div className="space-y-3">
-                    <h2 className="text-6xl leading-[120%] font-semibold text-[#242424]">
-                      Add new policy
-                    </h2>
-                    <p className="text-sm leading-[120%] font-normal text-[#929292]">
-                      Provide the required details to create a new insurance
-                      policy for your facility.
-                    </p>
-                    <div className="flex gap-2">
-                      {Array.from({ length: totalSteps }).map((_, index) => {
-                        const stepNumber = index + 1;
-                        const isCompleted = stepNumber < currentStep;
-                        const isActive = stepNumber === currentStep;
-
-                        return (
-                          <div
-                            key={stepNumber}
-                            className="relative h-2 w-[213px] overflow-hidden rounded-full bg-[#E5E5E5]"
-                          >
-                            <div
-                              className={`absolute inset-0 h-full rounded-full transition-all duration-500 ease-out ${
-                                isCompleted || isActive
-                                  ? 'w-full bg-gradient-to-r from-[#4A90E2] to-[#5BA3F5]'
-                                  : 'w-0 bg-transparent'
-                              }`}
-                            />
-                          </div>
-                        );
-                      })}
+              <DialogContent
+                showCloseButton={false}
+                className="scrollbar-hide max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-3xl border-0 bg-white px-[3.25rem] pt-[3.25rem] pb-8 opacity-100 shadow-[0rem_0.25rem_7.5rem_0rem_rgba(0,0,0,0.05)]"
+              >
+                <div className="space-y-[2.75rem]">
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-4">
+                        <h2 className="tracking-snug text-8xl leading-tight font-[550] text-black">
+                          {currentStep === 1 && 'Add new policy'}
+                          {currentStep === 2 && 'Current Policy'}
+                          {currentStep === 3 && 'Upload Loss Run'}
+                          {currentStep === 4 && 'Facility Setup'}
+                          {currentStep === 5 && 'Provider Submission Agreement'}
+                        </h2>
+                        <p className="text-dark-neutral-400 text-3xl leading-snug font-medium tracking-normal">
+                          {currentStep === 1 &&
+                            'Provide the required details to create a new insurance policy for your facility.'}
+                          {currentStep === 2 &&
+                            'Extended overview of coverage limits and deductibles.'}
+                          {currentStep === 3 &&
+                            'Required policy documents and legal compliance records.'}
+                          {currentStep === 4 &&
+                            'Required policy documents and legal compliance records.'}
+                          {currentStep === 5 &&
+                            'Terms and conditions for submitting facility data through the PinchIQ platform.'}
+                        </p>
+                      </div>
+                      <DialogTrigger asChild>
+                        <XIcon className="mt-1.5 h-5 w-5 text-black" />
+                      </DialogTrigger>
                     </div>
-                  </div>
+                    {currentStep <= 4 ? (
+                      <div className="mt-7-5 flex gap-2">
+                        {Array.from({ length: totalSteps }).map((_, index) => {
+                          const stepNumber = index + 1;
+                          const isCompleted = stepNumber < currentStep;
+                          const isActive = stepNumber === currentStep;
 
-                  <div className="w-[54.75rem]">
+                          return (
+                            <div
+                              key={stepNumber}
+                              className="bg-gray relative h-2 w-[13.313rem] overflow-hidden rounded-full"
+                            >
+                              <div
+                                className={`bg-blue-2 absolute inset-0 h-full rounded-full bg-gradient-to-r transition-all duration-500 ease-out ${
+                                  isCompleted
+                                    ? 'w-full'
+                                    : isActive
+                                      ? 'w-[57.62%] delay-500'
+                                      : 'w-0'
+                                }`}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div>
                     {currentStep === 1 && (
                       <>
-                        <div className="flex items-start gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
-                            <svg
-                              className="h-5 w-5 text-gray-600"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                        <div className="flex items-center gap-6">
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleLogoUpload}
+                            accept="image/*"
+                            className="hidden"
+                          />
+                          <div className="relative flex h-13 w-13 items-center justify-center rounded-[1.125rem] bg-[#000000]/5">
+                            <div
+                              onClick={
+                                !uploadedLogo ? handleLogoClick : undefined
+                              }
+                              className={`flex items-center justify-center ${!uploadedLogo ? 'cursor-pointer' : ''}`}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              <Image
+                                src={
+                                  uploadedLogo ||
+                                  '/provider/add-policy/videoaudio.svg'
+                                }
+                                alt="Policy Logo"
+                                className="h-4 w-4 object-cover"
+                                width={16}
+                                height={16}
                               />
-                            </svg>
+                            </div>
+                            {uploadedLogo && (
+                              <button
+                                onClick={handleLogoClick}
+                                className="absolute -right-1 -bottom-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-tl-[0.625rem] bg-white transition-all"
+                              >
+                                <Image
+                                  src="/provider/add-policy/pen.svg"
+                                  alt="Edit Logo"
+                                  className="h-4 w-4"
+                                  width={16}
+                                  height={16}
+                                />
+                              </button>
+                            )}
                           </div>
-                          <div className="flex flex-col space-y-1">
+                          <div className="flex flex-col space-y-0.5">
                             <input
                               type="text"
+                              value={addNewPolicyFormData.policyName}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  policyName: e.target.value,
+                                })
+                              }
                               placeholder="Enter policy name"
-                              className="h-8 w-[13.25rem] rounded border-[1.5px] border-[#AFC8F2] px-2 py-1 text-center text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              className={`${addNewPolicyFormData.policyName ? 'border-transparent' : 'border-brand-blue-300'} placeholder:text-dark-neutral-200 h-8 max-w-[13.25rem] rounded-[0.25rem] border-[0.094rem] p-1 pr-2 text-6xl leading-tight font-medium tracking-normal text-[#000000] placeholder:text-6xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
                             />
                             <input
                               type="url"
+                              value={addNewPolicyFormData.policyLink}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  policyLink: e.target.value,
+                                })
+                              }
                               placeholder="Add a link to a website"
-                              className="h-6 w-[10.6875rem] rounded border-[1.5px] border-[#AFC8F2] p-1 text-center text-sm text-blue-500 focus:outline-none"
+                              className={`${addNewPolicyFormData.policyLink ? 'border-transparent' : 'border-brand-blue-300'} placeholder:text-dark-neutral-200 text-brand-blue-700 h-6 max-w-[10.688rem] rounded-[0.25rem] border-[0.094rem] p-1 text-3xl leading-tight font-medium tracking-normal placeholder:text-3xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
                             />
                           </div>
                         </div>
 
-                        <div className="mt-8 grid grid-cols-2 gap-6">
+                        <div className="mt-6-5 grid grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-900">
-                              Insured Name{' '}
-                              <span className="text-blue-500">*</span>
+                            <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                              Insured Name
+                              <span className="text-dark-blue"> *</span>
                             </label>
                             <input
                               type="text"
+                              value={addNewPolicyFormData.insuredName}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  insuredName: e.target.value,
+                                })
+                              }
                               placeholder="Enter legal name"
-                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                             />
                           </div>
 
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-900">
-                              Contact Name{' '}
-                              <span className="text-blue-500">*</span>
+                            <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                              Contact Name
+                              <span className="text-dark-blue"> *</span>
                             </label>
                             <input
                               type="text"
+                              value={addNewPolicyFormData.contactName}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  contactName: e.target.value,
+                                })
+                              }
                               placeholder="Enter full name"
-                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                             />
                           </div>
 
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-900">
-                              Contact Phone{' '}
-                              <span className="text-blue-500">*</span>
+                            <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                              Contact Phone
+                              <span className="text-dark-blue"> *</span>
                             </label>
                             <input
-                              type="tel"
-                              placeholder="+1 (___) ___-____"
-                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              type="text"
+                              value={addNewPolicyFormData.contactPhone}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  contactPhone: e.target.value,
+                                })
+                              }
+                              placeholder="+ 1 (___) ___ ___"
+                              className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                             />
                           </div>
 
                           <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-900">
-                              Contact Email{' '}
-                              <span className="text-blue-500">*</span>
+                            <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                              Contact Email
+                              <span className="text-dark-blue"> *</span>
                             </label>
                             <input
                               type="email"
+                              value={addNewPolicyFormData.contactEmail}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  contactEmail: e.target.value,
+                                })
+                              }
                               placeholder="name@example.com"
-                              className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                              className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                             />
                           </div>
                         </div>
@@ -463,187 +725,381 @@ export default function MyPoliciesTable() {
                     {currentStep === 2 && (
                       <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Effective Date{' '}
-                            <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Effective Date
+                            <span className="text-dark-blue"> *</span>
                           </label>
                           <input
                             type="text"
+                            value={currentPolicyFormData.effectiveDate}
+                            onChange={e =>
+                              setCurrentPolicyFormData({
+                                ...currentPolicyFormData,
+                                effectiveDate: e.target.value,
+                              })
+                            }
                             placeholder="mm/dd/yyyy"
-                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Expiration Date{' '}
-                            <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Expiration Date
+                            <span className="text-dark-blue"> *</span>
                           </label>
                           <input
                             type="text"
+                            value={currentPolicyFormData.expirationDate}
+                            onChange={e =>
+                              setCurrentPolicyFormData({
+                                ...currentPolicyFormData,
+                                expirationDate: e.target.value,
+                              })
+                            }
                             placeholder="mm/dd/yyyy"
-                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Insurance Company{' '}
-                            <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Insurance Company
+                            <span className="text-dark-blue"> *</span>
                           </label>
                           <input
                             type="text"
+                            value={currentPolicyFormData.insuranceCompany}
+                            onChange={e =>
+                              setCurrentPolicyFormData({
+                                ...currentPolicyFormData,
+                                insuranceCompany: e.target.value,
+                              })
+                            }
                             placeholder="Enter company name"
-                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Policy Type <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Policy Type
+                            <span className="text-dark-blue"> *</span>
                           </label>
-                          <Tabs defaultValue="claims-made" className="w-full">
-                            <TabsList className="grid h-auto w-full grid-cols-2 rounded-xl bg-[#F5F5F5] p-1">
-                              <TabsTrigger
-                                value="claims-made"
-                                className="rounded-xl px-4 py-3 text-sm font-normal text-gray-900 transition-all data-[state=active]:bg-white data-[state=active]:font-medium data-[state=active]:text-[#242424] data-[state=active]:shadow-sm"
-                              >
-                                Claims-made
-                              </TabsTrigger>
-                              <TabsTrigger
-                                value="occurrence"
-                                className="rounded-xl px-4 py-3 text-sm font-normal text-gray-900 transition-all data-[state=active]:bg-white data-[state=active]:font-medium data-[state=active]:text-[#242424] data-[state=active]:shadow-sm"
-                              >
-                                Occurrence
-                              </TabsTrigger>
-                            </TabsList>
-                          </Tabs>
+                          <PolicyTypeTabs
+                            value={policyType}
+                            onValueChange={setPolicyType}
+                          />
                         </div>
 
-                        <div className="col-span-2 space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Coverage Limit{' '}
-                            <span className="text-blue-500">*</span>
+                        <div
+                          className={`space-y-2 ${policyType === 'Claims-made' ? '' : 'col-span-2'}`}
+                        >
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Coverage Limit
+                            <span className="text-dark-blue"> *</span>
                           </label>
                           <input
                             type="text"
+                            value={currentPolicyFormData.coverageLimit}
+                            onChange={e =>
+                              setCurrentPolicyFormData({
+                                ...currentPolicyFormData,
+                                coverageLimit: e.target.value,
+                              })
+                            }
                             placeholder="Enter amount (e.g. $5,000,000)"
-                            className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
                         </div>
 
+                        {policyType === 'Claims-made' && (
+                          <div className="space-y-2">
+                            <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                              Retroactive Date
+                              <span className="text-dark-blue"> *</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={currentPolicyFormData.retroactiveDate}
+                              onChange={e =>
+                                setCurrentPolicyFormData({
+                                  ...currentPolicyFormData,
+                                  retroactiveDate: e.target.value,
+                                })
+                              }
+                              placeholder="mm/dd/yyyy"
+                              className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                            />
+                          </div>
+                        )}
+
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Deductible <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Deductible
+                            <span className="text-dark-blue"> *</span>
                           </label>
                           <input
                             type="text"
+                            value={currentPolicyFormData.deductible}
+                            onChange={e =>
+                              setCurrentPolicyFormData({
+                                ...currentPolicyFormData,
+                                deductible: e.target.value,
+                              })
+                            }
                             placeholder="Enter amount (e.g. $25,000)"
-                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Premium <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Premium
+                            <span className="text-dark-blue"> *</span>
                           </label>
                           <input
                             type="text"
+                            value={currentPolicyFormData.premium}
+                            onChange={e =>
+                              setCurrentPolicyFormData({
+                                ...currentPolicyFormData,
+                                premium: e.target.value,
+                              })
+                            }
                             placeholder="Enter amount (e.g. $25,000)"
-                            className="h-[2.875rem] w-[26.625rem] rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-sm font-medium text-gray-900">
-                            Coverage Issues{' '}
-                            <span className="text-blue-500">*</span>
+                        <div className="space-y-2">
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Coverage Issues
+                            <span className="text-dark-blue"> *</span>
                           </label>
-                          <RadioGroup
-                            defaultValue="no"
-                            className="flex flex-col gap-4"
-                          >
-                            <div className="mt-4 flex items-center gap-2">
-                              <RadioGroupItem value="no" id="coverage-no" />
-                              <label
-                                htmlFor="coverage-no"
-                                className="cursor-pointer text-sm font-normal text-gray-900"
+                          <div className="mt-5 flex flex-col gap-3">
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                variant="modern"
+                                checked={
+                                  currentPolicyFormData.coverageIssues === 'No'
+                                }
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    coverageIssues: 'No',
+                                  })
+                                }
+                                className="border-light-neutral-300 h-4 w-4 border-1"
+                              />
+                              <span
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    coverageIssues: 'No',
+                                  })
+                                }
+                                className="mt-0.5 cursor-default text-xl leading-tight font-semibold tracking-normal text-black"
                               >
                                 No
-                              </label>
+                              </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <RadioGroupItem value="yes" id="coverage-yes" />
-                              <label
-                                htmlFor="coverage-yes"
-                                className="cursor-pointer text-sm font-normal text-gray-900"
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                variant="modern"
+                                checked={
+                                  currentPolicyFormData.coverageIssues === 'Yes'
+                                }
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    coverageIssues: 'Yes',
+                                  })
+                                }
+                                className="border-light-neutral-300 h-4 w-4 border-1"
+                              />
+                              <span
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    coverageIssues: 'Yes',
+                                  })
+                                }
+                                className="mt-0.5 cursor-default text-xl leading-tight font-semibold tracking-normal text-black"
                               >
                                 Yes
-                              </label>
+                              </span>
                             </div>
-                          </RadioGroup>
+                          </div>
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-900">
-                            Bankruptcy Filings{' '}
-                            <span className="text-blue-500">*</span>
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Bankruptcy Filings
+                            <span className="text-dark-blue"> *</span>
                           </label>
-                          <RadioGroup
-                            defaultValue="no"
-                            className="flex flex-col gap-4"
-                          >
-                            <div className="mt-4 flex items-center gap-2">
-                              <RadioGroupItem value="no" id="coverage-no" />
-                              <label
-                                htmlFor="coverage-no"
-                                className="cursor-pointer text-sm font-normal text-gray-900"
+                          <div className="mt-5 flex flex-col gap-3">
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                variant="modern"
+                                checked={
+                                  currentPolicyFormData.bankruptcyFilings ===
+                                  'No'
+                                }
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    bankruptcyFilings: 'No',
+                                  })
+                                }
+                                className="border-light-neutral-300 h-4 w-4 border-1"
+                              />
+                              <span
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    bankruptcyFilings: 'No',
+                                  })
+                                }
+                                className="mt-0.5 cursor-default text-xl leading-tight font-semibold tracking-normal text-black"
                               >
                                 No
-                              </label>
+                              </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <RadioGroupItem value="yes" id="coverage-yes" />
-                              <label
-                                htmlFor="coverage-yes"
-                                className="cursor-pointer text-sm font-normal text-gray-900"
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                variant="modern"
+                                checked={
+                                  currentPolicyFormData.bankruptcyFilings ===
+                                  'Yes'
+                                }
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    bankruptcyFilings: 'Yes',
+                                  })
+                                }
+                                className="border-light-neutral-300 h-4 w-4 border-1"
+                              />
+                              <span
+                                onClick={e =>
+                                  setCurrentPolicyFormData({
+                                    ...currentPolicyFormData,
+                                    bankruptcyFilings: 'Yes',
+                                  })
+                                }
+                                className="mt-0.5 cursor-default text-xl leading-tight font-semibold tracking-normal text-black"
                               >
                                 Yes
-                              </label>
+                              </span>
                             </div>
-                          </RadioGroup>
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {currentStep === 3 && (
-                      <div className="flex flex-col items-center justify-center space-y-6">
-                        <div className="flex h-[209px] w-[876px] flex-col items-center justify-center gap-4 rounded-2xl bg-[#F8F8F8] px-8 py-[52px]">
-                          <div className="bg-opacity-10 flex h-16 w-16 items-center justify-center">
+                      <div className="space-y-8-5 mt-12 flex flex-col items-center justify-center">
+                        <input
+                          type="file"
+                          ref={lossRunInputRef}
+                          onChange={handleFileInputChange}
+                          accept="*"
+                          multiple
+                          className="hidden"
+                        />
+                        <div
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                          onClick={handleFileClick}
+                          className={`bg-gray flex min-h-52 w-full cursor-pointer flex-col items-center justify-center gap-3.5 rounded-2xl px-8 py-13 transition-all ${
+                            isDragging
+                              ? 'border-brand-blue-700 border-2 border-dashed bg-blue-50'
+                              : ''
+                          }`}
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center">
                             <Image
-                              src="/file-icon.svg"
+                              src="/provider/add-policy/doc-file-type.svg"
                               alt="Upload Icon"
-                              width={32}
-                              height={32}
+                              width={40}
+                              height={40}
                             />
                           </div>
 
                           <div className="text-center">
-                            <h3 className="text-lg font-semibold text-[#242424]">
+                            <h3 className="text-3xl leading-snug font-medium tracking-normal text-black">
                               Upload Documents
                             </h3>
-                            <p className="mt-2 text-sm text-[#929292]">
+                            <p className="text-dark-neutral-500 mt-3.5 text-xl leading-tight font-[400] tracking-normal">
                               Drag & drop or
-                              <button className="px-1 font-medium text-[#4A90E2] hover:underline">
+                              <span className="text-brand-blue-700 px-1 hover:underline">
                                 click to upload
-                              </button>
+                              </span>
                               Loss Run (PDF)
                             </p>
                           </div>
                         </div>
 
-                        <div className="max-w-2xl text-center">
-                          <p className="text-xs leading-relaxed text-[#929292]">
+                        {uploadedFiles.length > 0 && (
+                          <div className="w-full">
+                            {uploadedFiles.map(lossRun => (
+                              <div
+                                key={lossRun.id}
+                                className="flex items-center justify-between rounded-2xl bg-white px-6 py-3"
+                              >
+                                <div className="flex items-center gap-10">
+                                  <div className="relative flex h-10 w-8 items-center justify-center">
+                                    <Image
+                                      src="/provider/add-policy/file-type.svg"
+                                      alt="File Icon"
+                                      width={32}
+                                      height={40}
+                                    />
+                                    <Image
+                                      src="/provider/add-policy/file-type-earmark.svg"
+                                      alt="File Icon Overlay"
+                                      width={12}
+                                      height={12}
+                                      className="absolute top-0 right-0"
+                                    />
+                                    <h4 className="text-dark-blue absolute bottom-1.5 left-2.5 text-sm leading-tight font-semibold tracking-normal lowercase">
+                                      {lossRun.fileType}
+                                    </h4>
+                                  </div>
+                                  <span className="leading-medium text-xl font-medium tracking-normal text-black">
+                                    {lossRun.name}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center gap-12">
+                                  <span className="leading-medium bg-gray pb-0-75 h-6 min-w-15 rounded-[6.25rem] px-2 pt-1 text-lg font-semibold tracking-normal text-black">
+                                    {formatFileSize(lossRun.size)}
+                                  </span>
+                                  <span className="leading-medium ml-10 text-xl font-medium tracking-normal text-black">
+                                    Uploaded on:{' '}
+                                    {formatUploadDate(lossRun.uploadedAt)}
+                                  </span>
+                                  <button
+                                    onClick={() => handleDeleteFile(lossRun.id)}
+                                    className="mb-1 ml-12"
+                                  >
+                                    <Image
+                                      src="/provider/add-policy/trash-bin.svg"
+                                      alt="Delete PDF"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="text-start">
+                          <p className="text-dark-neutral-500 text-xl leading-normal font-[400] tracking-normal">
                             Uploaded documents must not include personally
                             identifiable health information (PHI) unless
                             authorized under HIPAA or relevant laws. By
@@ -655,457 +1111,853 @@ export default function MyPoliciesTable() {
                     )}
 
                     {currentStep === 4 && (
-                      <div className="space-y-8">
-                        <div>
-                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
-                            Basic Information
-                          </h3>
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium text-gray-900">
-                                Facility Name{' '}
-                                <span className="text-blue-500">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                placeholder="Green Valley Nursing Home"
-                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium text-gray-900">
-                                Facility Address{' '}
-                                <span className="text-blue-500">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                placeholder="321 Main Street, Southfield, IL 62704"
-                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium text-gray-900">
-                                Website
-                              </label>
-                              <input
-                                type="url"
-                                placeholder="www.greenvalleynursing.com"
-                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium text-gray-900">
-                                CMS Provider ID{' '}
-                                <span className="text-blue-500">*</span>
-                              </label>
-                              <input
-                                type="text"
-                                placeholder="445721"
-                                className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                              />
-                            </div>
-                          </div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="col-span-2 mt-1 text-6xl leading-tight font-medium tracking-normal">
+                          Basic Information
                         </div>
-
-                        <div>
-                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
-                            Bed Capacity
-                          </h3>
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-[1fr_200px_200px_40px] items-start gap-4">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Bed Type{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <select className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                                  <option>
-                                    Skilled Nursing Facility (SNF)
-                                  </option>
-                                </select>
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Licensed{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  placeholder="120"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Occupied{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  placeholder="110"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="mt-8 flex items-end">
-                                <button className="flex -space-x-3 text-gray-400">
-                                  <MoreVertical className="h-5 w-5" />
-                                  <MoreVertical className="h-5 w-5" />
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-[1fr_200px_200px_40px] items-start gap-4">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Bed Type{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <select className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                                  <option>Assisted Living (ALF)</option>
-                                </select>
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Licensed{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  placeholder="60"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Occupied{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  placeholder="55"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="mt-8 flex items-end">
-                                <button className="flex -space-x-3 text-gray-400">
-                                  <MoreVertical className="h-5 w-5" />
-                                  <MoreVertical className="h-5 w-5" />
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-[1fr_200px_200px_40px] items-start gap-4">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Bed Type{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <select className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white px-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                                  <option>Memory Care / Dementia Unit</option>
-                                </select>
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Licensed{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  placeholder="40"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Occupied{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="number"
-                                  placeholder="32"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="mt-8 flex items-end">
-                                <button className="flex -space-x-3 text-gray-400">
-                                  <MoreVertical className="h-5 w-5" />
-                                  <MoreVertical className="h-5 w-5" />
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="mt-4 flex items-center justify-center gap-4">
-                              <div className="h-[1px] flex-1 bg-gray-200"></div>
-                              <button className="flex items-center gap-2 rounded-lg bg-[#F5F8FB] px-4 py-2 text-sm font-medium text-[#4A90E2] hover:bg-[#E8F1F8]">
-                                <span className="text-lg">+</span>
-                                <span>Add another bed type</span>
-                              </button>
-                              <div className="h-[1px] flex-1 bg-gray-200"></div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
-                            Ownership
-                          </h3>
-                          <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Owner of Facility{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Healthcare Partners LLC"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  How Long Owned
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="6 years"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Other Owned Facilities
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="Sunrise Rehabilitation Center"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Facility ID{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="22495"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-                            </div>
-                            <div className="mt-4 flex items-center justify-center gap-4">
-                              <div className="h-[1px] flex-1 bg-gray-200"></div>
-                              <button className="flex items-center gap-2 rounded-lg bg-[#F5F8FB] px-4 py-2 text-sm font-medium text-[#4A90E2] hover:bg-[#E8F1F8]">
-                                <span className="text-lg">+</span>
-                                <span>Add another owner</span>
-                              </button>
-                              <div className="h-[1px] flex-1 bg-gray-200"></div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <h3 className="mb-4 text-base font-semibold text-[#242424]">
-                            Management Company
-                          </h3>
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <label className="text-sm font-medium text-gray-900">
-                                Managed by Company?{' '}
-                                <span className="text-blue-500">*</span>
-                              </label>
-                              <RadioGroup
-                                defaultValue="yes"
-                                className="mt-2 flex gap-12"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <RadioGroupItem
-                                    value="yes"
-                                    id="managed-yes"
-                                  />
-                                  <label
-                                    htmlFor="managed-yes"
-                                    className="cursor-pointer text-sm font-normal text-gray-900"
-                                  >
-                                    Yes
-                                  </label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <RadioGroupItem value="no" id="managed-no" />
-                                  <label
-                                    htmlFor="managed-no"
-                                    className="cursor-pointer text-sm font-normal text-gray-900"
-                                  >
-                                    No
-                                  </label>
-                                </div>
-                              </RadioGroup>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Management Company Name{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="MediCare Management Group"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  How Long Managed
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="7 years"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Other Managed Facilities
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="HillSide Memory Care"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-900">
-                                  Facility ID{' '}
-                                  <span className="text-blue-500">*</span>
-                                </label>
-                                <input
-                                  type="text"
-                                  placeholder="33306"
-                                  className="h-[2.875rem] w-full rounded-xl border border-[#F0F0F0] bg-white p-4 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="mt-4 flex items-center justify-center gap-4">
-                              <div className="h-[1px] flex-1 bg-gray-200"></div>
-                              <button className="flex items-center gap-2 rounded-lg bg-[#F5F8FB] px-4 py-2 text-sm font-medium text-[#4A90E2] hover:bg-[#E8F1F8]">
-                                <span className="text-lg">+</span>
-                                <span>Add another management company</span>
-                              </button>
-                              <div className="h-[1px] flex-1 bg-gray-200"></div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3 rounded-xl bg-gray-50 p-4">
+                        <div className="space-y-2">
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Facility Name
+                            <span className="text-dark-blue"> *</span>
+                          </label>
                           <input
-                            type="radio"
-                            id="agreement"
-                            className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+                            type="text"
+                            value={
+                              facilitySetupFormData.basicInformation
+                                .facilityName
+                            }
+                            onChange={e =>
+                              setFacilitySetupFormData({
+                                ...facilitySetupFormData,
+                                basicInformation: {
+                                  ...facilitySetupFormData.basicInformation,
+                                  facilityName: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="Enter facility name"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                           />
-                          <label
-                            htmlFor="agreement"
-                            className="text-xs text-gray-600"
-                          >
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Facility Address
+                            <span className="text-dark-blue"> *</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={
+                              facilitySetupFormData.basicInformation
+                                .facilityAddress
+                            }
+                            onChange={e =>
+                              setFacilitySetupFormData({
+                                ...facilitySetupFormData,
+                                basicInformation: {
+                                  ...facilitySetupFormData.basicInformation,
+                                  facilityAddress: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="Street, City, State, ZIP"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            Website
+                            <span className="text-dark-blue"> *</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={
+                              facilitySetupFormData.basicInformation.website
+                            }
+                            onChange={e =>
+                              setFacilitySetupFormData({
+                                ...facilitySetupFormData,
+                                basicInformation: {
+                                  ...facilitySetupFormData.basicInformation,
+                                  website: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="www.example.com"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                            CMS Provider ID
+                            <span className="text-dark-blue"> *</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={
+                              facilitySetupFormData.basicInformation
+                                .cmsProviderID
+                            }
+                            onChange={e =>
+                              setFacilitySetupFormData({
+                                ...facilitySetupFormData,
+                                basicInformation: {
+                                  ...facilitySetupFormData.basicInformation,
+                                  cmsProviderID: e.target.value,
+                                },
+                              })
+                            }
+                            placeholder="Enter CMS ID"
+                            className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="col-span-2 mt-2.5 text-6xl leading-tight font-medium tracking-normal">
+                          Bed Capacity
+                        </div>
+
+                        {facilitySetupFormData.bedCapacity.map(
+                          (bedCapacityRow, index) => {
+                            return (
+                              <Fragment key={index}>
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Bed Type
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <div className="mt-1">
+                                    <Select
+                                      value={bedCapacityRow.bedType}
+                                      onValueChange={value => {
+                                        const updatedBedCapacity = [
+                                          ...facilitySetupFormData.bedCapacity,
+                                        ];
+                                        updatedBedCapacity[index].bedType =
+                                          value;
+                                        setFacilitySetupFormData({
+                                          ...facilitySetupFormData,
+                                          bedCapacity: updatedBedCapacity,
+                                        });
+                                      }}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select bed type" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="all">All</SelectItem>
+                                        <SelectItem value="private">
+                                          Private
+                                        </SelectItem>
+                                        <SelectItem value="semi-private">
+                                          Semi-Private
+                                        </SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-6">
+                                  <div className="space-y-2">
+                                    <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                      Licensed
+                                      <span className="text-dark-blue"> *</span>
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={bedCapacityRow.licensedBeds}
+                                      onChange={e => {
+                                        const updatedBedCapacity = [
+                                          ...facilitySetupFormData.bedCapacity,
+                                        ];
+                                        updatedBedCapacity[index].licensedBeds =
+                                          e.target.value;
+                                        setFacilitySetupFormData({
+                                          ...facilitySetupFormData,
+                                          bedCapacity: updatedBedCapacity,
+                                        });
+                                      }}
+                                      placeholder="Enter licensed beds"
+                                      className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                      Occupied
+                                      <span className="text-dark-blue"> *</span>
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={bedCapacityRow.occupiedBeds}
+                                      onChange={e => {
+                                        const updatedBedCapacity = [
+                                          ...facilitySetupFormData.bedCapacity,
+                                        ];
+                                        updatedBedCapacity[index].occupiedBeds =
+                                          e.target.value;
+                                        setFacilitySetupFormData({
+                                          ...facilitySetupFormData,
+                                          bedCapacity: updatedBedCapacity,
+                                        });
+                                      }}
+                                      placeholder="Enter occupied beds"
+                                      className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+                              </Fragment>
+                            );
+                          }
+                        )}
+
+                        <div className="relative col-span-2 mt-5 mb-3">
+                          <div className="border-t-light-neutral-300 absolute inset-0 border-t"></div>
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <Button
+                              variant="muted"
+                              onClick={() => {
+                                setFacilitySetupFormData(prev => ({
+                                  ...prev,
+                                  bedCapacity: [
+                                    ...prev.bedCapacity,
+                                    {
+                                      bedType: '',
+                                      licensedBeds: '',
+                                      occupiedBeds: '',
+                                    },
+                                  ],
+                                }));
+                              }}
+                              className="max-h-7-5 bg-gray text-dark-blue min-w-56 rounded-lg text-xl leading-tight font-semibold tracking-normal"
+                            >
+                              <Plus className="mb-0.5 h-3 w-3" />
+                              <span>Add another bed type</span>
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="col-span-2 mt-2.5 text-6xl leading-tight font-medium tracking-normal">
+                          Ownership
+                        </div>
+
+                        {facilitySetupFormData.ownership.map(
+                          (ownerhipRow, index) => {
+                            return (
+                              <Fragment key={index}>
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Owner of Facility
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={ownerhipRow.ownerName}
+                                    onChange={e => {
+                                      const newOwnership = [
+                                        ...facilitySetupFormData.ownership,
+                                      ];
+                                      newOwnership[index].ownerName =
+                                        e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        ownership: newOwnership,
+                                      }));
+                                    }}
+                                    placeholder="Enter owner name"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    How Long Owned
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={ownerhipRow.howLongOwned}
+                                    onChange={e => {
+                                      const newOwnership = [
+                                        ...facilitySetupFormData.ownership,
+                                      ];
+                                      newOwnership[index].howLongOwned =
+                                        e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        ownership: newOwnership,
+                                      }));
+                                    }}
+                                    placeholder="e.g. 5 years, 3 months"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Other Owned Facilities
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={ownerhipRow.otherOwnedFacilities}
+                                    onChange={e => {
+                                      const newOwnership = [
+                                        ...facilitySetupFormData.ownership,
+                                      ];
+                                      newOwnership[index].otherOwnedFacilities =
+                                        e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        ownership: newOwnership,
+                                      }));
+                                    }}
+                                    placeholder="Enter facility name"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Facility ID
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={ownerhipRow.facilityID}
+                                    onChange={e => {
+                                      const newOwnership = [
+                                        ...facilitySetupFormData.ownership,
+                                      ];
+                                      newOwnership[index].facilityID =
+                                        e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        ownership: newOwnership,
+                                      }));
+                                    }}
+                                    placeholder="Enter facility ID"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+                              </Fragment>
+                            );
+                          }
+                        )}
+
+                        <div className="relative col-span-2 mt-5 mb-3">
+                          <div className="border-t-light-neutral-300 absolute inset-0 border-t"></div>
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <Button
+                              variant="muted"
+                              onClick={() => {
+                                setFacilitySetupFormData(prev => ({
+                                  ...prev,
+                                  ownership: [
+                                    ...prev.ownership,
+                                    {
+                                      ownerName: '',
+                                      howLongOwned: '',
+                                      otherOwnedFacilities: '',
+                                      facilityID: '',
+                                    },
+                                  ],
+                                }));
+                              }}
+                              className="max-h-7-5 bg-gray text-dark-blue min-w-56 rounded-lg text-xl leading-tight font-semibold tracking-normal"
+                            >
+                              <Plus className="mb-0.5 h-3 w-3" />
+                              <span>Add another owner</span>
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="col-span-2 mt-2.5 text-6xl leading-tight font-medium tracking-normal">
+                          Management Company
+                        </div>
+
+                        {facilitySetupFormData.managementCompany.map(
+                          (managementCompanyRow, index) => {
+                            return (
+                              <Fragment key={index}>
+                                <div className="col-span-2 mb-2 space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Managed by Company?
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <div className="mt-5 flex gap-13">
+                                    <div className="flex items-center gap-3.5">
+                                      <Checkbox
+                                        variant="modern"
+                                        checked={
+                                          managementCompanyRow.managedByCompany ===
+                                          'Yes'
+                                        }
+                                        onClick={() => {
+                                          const updatedManagementCompany = [
+                                            ...facilitySetupFormData.managementCompany,
+                                          ];
+                                          updatedManagementCompany[
+                                            index
+                                          ].managedByCompany = 'Yes';
+                                          setFacilitySetupFormData(prev => ({
+                                            ...prev,
+                                            managementCompany:
+                                              updatedManagementCompany,
+                                          }));
+                                        }}
+                                        className="border-light-neutral-300 h-4 w-4 border-1"
+                                      />
+                                      <span
+                                        className="mt-0.5 cursor-default text-xl leading-tight font-semibold tracking-normal text-black"
+                                        onClick={() => {
+                                          const updatedManagementCompany = [
+                                            ...facilitySetupFormData.managementCompany,
+                                          ];
+                                          updatedManagementCompany[
+                                            index
+                                          ].managedByCompany = 'Yes';
+                                          setFacilitySetupFormData(prev => ({
+                                            ...prev,
+                                            managementCompany:
+                                              updatedManagementCompany,
+                                          }));
+                                        }}
+                                      >
+                                        Yes
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-3.5">
+                                      <Checkbox
+                                        variant="modern"
+                                        checked={
+                                          managementCompanyRow.managedByCompany ===
+                                          'No'
+                                        }
+                                        onClick={() => {
+                                          const updatedManagementCompany = [
+                                            ...facilitySetupFormData.managementCompany,
+                                          ];
+                                          updatedManagementCompany[
+                                            index
+                                          ].managedByCompany = 'No';
+                                          setFacilitySetupFormData(prev => ({
+                                            ...prev,
+                                            managementCompany:
+                                              updatedManagementCompany,
+                                          }));
+                                        }}
+                                        className="border-light-neutral-300 h-4 w-4 border-1"
+                                      />
+                                      <span
+                                        onClick={() => {
+                                          const updatedManagementCompany = [
+                                            ...facilitySetupFormData.managementCompany,
+                                          ];
+                                          updatedManagementCompany[
+                                            index
+                                          ].managedByCompany = 'No';
+                                          setFacilitySetupFormData(prev => ({
+                                            ...prev,
+                                            managementCompany:
+                                              updatedManagementCompany,
+                                          }));
+                                        }}
+                                        className="mt-0.5 cursor-default text-xl leading-tight font-semibold tracking-normal text-black"
+                                      >
+                                        No
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Management Company Name
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={
+                                      managementCompanyRow.managementCompanyName
+                                    }
+                                    onChange={e => {
+                                      const updatedManagementCompany = [
+                                        ...facilitySetupFormData.managementCompany,
+                                      ];
+                                      updatedManagementCompany[
+                                        index
+                                      ].managementCompanyName = e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        managementCompany:
+                                          updatedManagementCompany,
+                                      }));
+                                    }}
+                                    placeholder="Enter company name"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    How Long Managed
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={managementCompanyRow.howLongManaged}
+                                    onChange={e => {
+                                      const updatedManagementCompany = [
+                                        ...facilitySetupFormData.managementCompany,
+                                      ];
+                                      updatedManagementCompany[
+                                        index
+                                      ].howLongManaged = e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        managementCompany:
+                                          updatedManagementCompany,
+                                      }));
+                                    }}
+                                    placeholder="e.g. 7 years, 2 months"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Other Managed Facilities
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={
+                                      managementCompanyRow.otherManagedFacilities
+                                    }
+                                    onChange={e => {
+                                      const updatedManagementCompany = [
+                                        ...facilitySetupFormData.managementCompany,
+                                      ];
+                                      updatedManagementCompany[
+                                        index
+                                      ].otherManagedFacilities = e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        managementCompany:
+                                          updatedManagementCompany,
+                                      }));
+                                    }}
+                                    placeholder="Enter facility name"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-2">
+                                  <label className="text-xl leading-tight font-medium tracking-normal text-black">
+                                    Facility ID
+                                    <span className="text-dark-blue"> *</span>
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={managementCompanyRow.facilityID}
+                                    onChange={e => {
+                                      const updatedManagementCompany = [
+                                        ...facilitySetupFormData.managementCompany,
+                                      ];
+                                      updatedManagementCompany[
+                                        index
+                                      ].facilityID = e.target.value;
+                                      setFacilitySetupFormData(prev => ({
+                                        ...prev,
+                                        managementCompany:
+                                          updatedManagementCompany,
+                                      }));
+                                    }}
+                                    placeholder="Enter facility ID"
+                                    className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
+                                  />
+                                </div>
+                              </Fragment>
+                            );
+                          }
+                        )}
+
+                        <div className="relative col-span-2 mt-5 mb-3">
+                          <div className="border-t-light-neutral-300 absolute inset-0 border-t"></div>
+                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <Button
+                              variant="muted"
+                              onClick={() => {
+                                setFacilitySetupFormData(prev => ({
+                                  ...prev,
+                                  managementCompany: [
+                                    ...prev.managementCompany,
+                                    {
+                                      managedByCompany: '',
+                                      managementCompanyName: '',
+                                      howLongManaged: '',
+                                      otherManagedFacilities: '',
+                                      facilityID: '',
+                                    },
+                                  ],
+                                }));
+                              }}
+                              className="max-h-7-5 bg-gray text-dark-blue min-w-56 rounded-lg text-xl leading-tight font-semibold tracking-normal"
+                            >
+                              <Plus className="mb-0.5 h-3 w-3" />
+                              <span>Add another management company</span>
+                            </Button>
+                          </div>
+                        </div>
+
+                        <div className="col-span-2 mt-2.5 flex items-start gap-3.5">
+                          <Checkbox
+                            variant="modern"
+                            checked={facilitySetupFormData.iAgree === 'Yes'}
+                            onClick={() =>
+                              setFacilitySetupFormData(prev => ({
+                                ...prev,
+                                iAgree: prev.iAgree === 'Yes' ? 'No' : 'Yes',
+                              }))
+                            }
+                            className="border-light-neutral-300 mt-0.5 h-4 w-4 border-1"
+                          />
+                          <span className="text-dark-neutral-500 mt-0.5 text-xl leading-snug font-medium tracking-normal">
                             By submitting this facility data, I acknowledge that
                             I am authorized to do so and accept the{' '}
-                            <a
-                              href="#"
-                              className="font-medium text-blue-500 hover:underline"
-                            >
-                              Provider Submission Agreement
-                            </a>
-                            , including rules on disclosures, confidentiality,
-                            and compliance.
-                          </label>
+                            <span className="text-dark-blue hover:underline">
+                              Provider Submission Agreement,
+                            </span>
+                            <span>
+                              {' '}
+                              including rules on data use, confidentiality, and
+                              compliance.
+                            </span>
+                          </span>
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-between pt-8">
-                      {currentStep === 4 ? (
-                        <>
-                          <button className="flex h-[46px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
-                            Save as Draft
-                          </button>
-                          <div className="flex gap-3">
-                            <button
-                              onClick={() => setCurrentStep(currentStep - 1)}
-                              className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50"
-                            >
-                              Go Back
-                            </button>
-                            <button className="flex h-[46px] w-[209px] items-center justify-center gap-2 rounded-[100px] bg-[#F8F8F8] px-4 py-2 text-sm font-medium text-[#4A90E2] transition-colors hover:bg-[#DBEAFE]">
-                              <span>Save Policy</span>
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 9l-7 7-7-7"
-                                />
-                              </svg>
-                            </button>
+
+                    {currentStep === 5 && (
+                      <div className="-mt-2.5 grid grid-cols-1 gap-8">
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-3 px-2.5">
+                            <div className="h-1 w-1 rounded-full bg-black"></div>
+                            <h3 className="text-3xl leading-snug font-semibold tracking-normal text-black">
+                              Authority Warranties
+                            </h3>
                           </div>
-                        </>
-                      ) : (
-                        <>
-                          <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
-                            Save as Draft
-                          </button>
-                          <div className="flex gap-3">
-                            {currentStep > 1 ? (
-                              <button
-                                onClick={() => setCurrentStep(currentStep - 1)}
-                                className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50"
-                              >
-                                Go Back
-                              </button>
-                            ) : (
-                              <DialogTrigger asChild>
-                                <button className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] border border-[#F0F0F0] px-8 py-4 text-sm font-medium text-[#242424] transition-colors hover:bg-gray-50">
-                                  Cancel
-                                </button>
-                              </DialogTrigger>
-                            )}
-                            <button
-                              onClick={() => setCurrentStep(currentStep + 1)}
-                              className="flex h-[46px] w-[209px] items-center justify-center rounded-[100px] bg-[#4A90E2] px-8 py-4 text-sm font-medium text-white transition-colors hover:bg-[#3A7BC8]"
-                            >
-                              Continue
-                            </button>
+                          <p className="text-dark-neutral-400 text-2xl leading-snug font-medium tracking-normal">
+                            The Provider represents and warrants that they are
+                            duly authorized to submit facility data on behalf of
+                            the facility and have the necessary rights and
+                            approvals to provide such information to PinchIQ.
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-3 px-2.5">
+                            <div className="h-1 w-1 rounded-full bg-black"></div>
+                            <h3 className="text-3xl leading-snug font-semibold tracking-normal text-black">
+                              Prohibition of PHI
+                            </h3>
                           </div>
-                        </>
-                      )}
-                    </div>
+                          <p className="text-dark-neutral-400 text-2xl leading-snug font-medium tracking-normal">
+                            The Provider agrees not to upload, share, or
+                            transmit any documents or information containing
+                            Protected Health Information (PHI) unless expressly
+                            authorized under HIPAA and other applicable privacy
+                            laws.
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-3 px-2.5">
+                            <div className="h-1 w-1 rounded-full bg-black"></div>
+                            <h3 className="text-3xl leading-snug font-semibold tracking-normal text-black">
+                              License to Use Data
+                            </h3>
+                          </div>
+                          <p className="text-dark-neutral-400 text-2xl leading-snug font-medium tracking-normal">
+                            The Provider grants PinchIQ a limited, non-exclusive
+                            license to transmit, display, and share the
+                            submitted facility data with brokers solely for the
+                            purpose of evaluating and providing insurance bids.
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-3 px-2.5">
+                            <div className="h-1 w-1 rounded-full bg-black"></div>
+                            <h3 className="text-3xl leading-snug font-semibold tracking-normal text-black">
+                              Disclosure & Confidentiality
+                            </h3>
+                          </div>
+                          <p className="text-dark-neutral-400 text-2xl leading-snug font-medium tracking-normal">
+                            The Provider acknowledges that broker access to
+                            facility data is limited to evaluation and quoting
+                            activities. PinchIQ disclaims responsibility for any
+                            misuse or unauthorized disclosure by brokers.
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-3 px-2.5">
+                            <div className="h-1 w-1 rounded-full bg-black"></div>
+                            <h3 className="text-3xl leading-snug font-semibold tracking-normal text-black">
+                              Indemnification
+                            </h3>
+                          </div>
+                          <p className="text-dark-neutral-400 text-2xl leading-snug font-medium tracking-normal">
+                            The Provider agrees to indemnify and hold harmless
+                            PinchIQ, its officers, employees, and affiliates
+                            from any claims, damages, or liabilities arising
+                            from the submission of false information,
+                            unauthorized uploads, or violation of applicable
+                            laws.
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                          <div className="flex items-center gap-3 px-2.5">
+                            <div className="h-1 w-1 rounded-full bg-black"></div>
+                            <h3 className="text-3xl leading-snug font-semibold tracking-normal text-black">
+                              Facility Data Usage License
+                            </h3>
+                          </div>
+                          <p className="text-dark-neutral-400 text-2xl leading-snug font-medium tracking-normal">
+                            The Provider grants PinchIQ a non-exclusive,
+                            royalty-free license to store, process, and analyze
+                            submitted facility information, including policy
+                            data, operational characteristics, and structured
+                            insights derived from uploaded documents (such as
+                            loss runs). PinchIQ may use such information in
+                            de-identified and aggregated form to enhance the
+                            platform, develop industry benchmarks, or create
+                            analytics products. PinchIQ may license or
+                            distribute such de-identified and aggregated
+                            insights to third parties, provided that no data is
+                            shared in a manner that identifies any specific
+                            facility, operator, or uploaded document.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {currentStep <= 4 ? (
+                      <div className="flex items-center justify-between pt-8">
+                        <DialogTrigger asChild>
+                          <Button
+                            variant={'secondary'}
+                            className="h-11-5 border-light-neutral-300 min-w-52 border px-8 py-4 text-xl font-semibold"
+                          >
+                            Save as Draft
+                          </Button>
+                        </DialogTrigger>
+                        <div className="flex gap-3">
+                          <Button
+                            variant={'secondary'}
+                            onClick={() => {
+                              if (currentStep === 1) return;
+                              setCurrentStep(currentStep - 1);
+                            }}
+                            className="h-11-5 border-light-neutral-300 min-w-52 border px-8 py-4 text-xl font-semibold"
+                          >
+                            Go Back
+                          </Button>
+                          {currentStep === 4 ? (
+                            <>
+                              {!!facilitySetupFormData.basicInformation.facilityName.trim() &&
+                              !!facilitySetupFormData.basicInformation.facilityAddress.trim() &&
+                              !!facilitySetupFormData.basicInformation.website.trim() &&
+                              !!facilitySetupFormData.basicInformation.cmsProviderID.trim() &&
+                              facilitySetupFormData.bedCapacity.every(
+                                bed =>
+                                  !!bed.bedType.trim() &&
+                                  !!bed.licensedBeds.trim() &&
+                                  !!bed.occupiedBeds.trim()
+                              ) &&
+                              facilitySetupFormData.managementCompany.every(
+                                company =>
+                                  !!company.facilityID.trim() &&
+                                  !!company.howLongManaged.trim() &&
+                                  !!company.otherManagedFacilities.trim() &&
+                                  !!company.managementCompanyName.trim() &&
+                                  (company.managedByCompany.trim() === 'Yes' ||
+                                    company.managedByCompany.trim() === 'No')
+                              ) &&
+                              (facilitySetupFormData.iAgree.trim() === 'Yes' ||
+                                facilitySetupFormData.iAgree.trim() ===
+                                  'No') ? (
+                                <Button
+                                  variant={'inverse'}
+                                  onClick={() =>
+                                    setCurrentStep(currentStep + 1)
+                                  }
+                                  className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                >
+                                  Complete
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant={'muted'}
+                                  onClick={() =>
+                                    setCurrentStep(currentStep + 1)
+                                  }
+                                  className="h-11-5 border-gray text-dark-blue flex min-w-52 items-center justify-center gap-1 border px-8 py-4 text-xl font-semibold"
+                                >
+                                  <span>Save Policy</span>
+                                  <ChevronDown className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {(currentStep === 1 &&
+                                !!addNewPolicyFormData.policyName.trim() &&
+                                !!addNewPolicyFormData.contactName.trim() &&
+                                !!addNewPolicyFormData.contactPhone.trim() &&
+                                !!addNewPolicyFormData.contactEmail.trim() &&
+                                !!addNewPolicyFormData.policyName.trim() &&
+                                !!addNewPolicyFormData.policyLink.trim()) ||
+                              (currentStep === 2 &&
+                                !!currentPolicyFormData.effectiveDate.trim() &&
+                                !!currentPolicyFormData.expirationDate.trim() &&
+                                !!currentPolicyFormData.insuranceCompany.trim() &&
+                                !!currentPolicyFormData.coverageLimit.trim() &&
+                                ((policyType === 'Claims-made' &&
+                                  !!currentPolicyFormData.retroactiveDate.trim()) ||
+                                  policyType === 'Occurrence') &&
+                                !!currentPolicyFormData.deductible.trim() &&
+                                !!currentPolicyFormData.premium.trim() &&
+                                (currentPolicyFormData.coverageIssues.trim() ===
+                                  'Yes' ||
+                                  currentPolicyFormData.coverageIssues.trim() ===
+                                    'No') &&
+                                (currentPolicyFormData.bankruptcyFilings.trim() ===
+                                  'Yes' ||
+                                  currentPolicyFormData.bankruptcyFilings.trim() ===
+                                    'No')) ||
+                              (currentStep === 3 &&
+                                uploadedFiles.length > 0) ? (
+                                <Button
+                                  variant={'inverse'}
+                                  onClick={() =>
+                                    setCurrentStep(currentStep + 1)
+                                  }
+                                  className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                >
+                                  Continue
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant={'muted'}
+                                  className={`h-11-5 border-gray text-dark-blue min-w-52 border px-8 py-4 text-xl font-semibold`}
+                                >
+                                  Continue
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </DialogContent>
@@ -1139,7 +1991,6 @@ export default function MyPoliciesTable() {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, rowIndex) => {
                 const isThisRowOpen = openDialogRowId === row.original.id;
-
                 return (
                   <TableRow
                     key={row.id}
@@ -1175,8 +2026,10 @@ export default function MyPoliciesTable() {
                           )}
 
                           {cellIndex === 3 && isThisRowOpen && dialogOpen && (
-                            <div className="absolute top-full right-2 z-50 mt-2">
-                              <div className="h-[7.625rem] w-[19.875rem] rounded-4xl border-0 bg-white p-4 shadow-[0px_4px_60px_0px_rgba(0,0,0,0.05)]">
+                            <div
+                              className={`left-8-5 absolute z-50 ${isThisRowOpen && rowIndex + 1 <= table.getRowModel().rows.length - 1 ? 'top-full mt-2' : 'bottom-full mb-2'}`}
+                            >
+                              <div className="h-[7.625rem] w-[19.875rem] rounded-4xl border-0 bg-white p-4 shadow-[0rem_0.25rem_3.75rem_0rem_#0000000D]">
                                 <div className="flex items-center justify-end gap-7">
                                   <button className="flex flex-col items-center justify-center gap-4 transition-all">
                                     <Image
@@ -1242,10 +2095,10 @@ export default function MyPoliciesTable() {
               <TableCell colSpan={columns.length} className="px-6 py-5">
                 <div className="flex items-center justify-between">
                   <PageSizeControl
+                    table={table}
                     value={pageSize}
                     onValueChange={setPageSize}
                   />
-
                   <Pagination table={table} maxVisiblePages={2} />
                 </div>
               </TableCell>

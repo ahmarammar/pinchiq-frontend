@@ -56,21 +56,13 @@ export const DesktopNavBody = ({
   visible,
 }: NavBodyProps) => {
   return (
-    <motion.div
-      animate={{
-        y: visible ? 20 : 0,
-      }}
-      transition={{
-        type: 'spring',
-        stiffness: 200,
-        damping: 50,
-      }}
+    <div
       className={cn(
         'relative z-[60] mx-auto hidden w-[98.5%] flex-row items-center justify-between self-start px-4 py-3 lg:flex',
         className
       )}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
