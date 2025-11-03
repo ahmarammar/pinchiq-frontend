@@ -2,13 +2,12 @@
 
 import { CheckCircle2, CircleCheckBig } from 'lucide-react';
 
-import BlackButton from '@/components/ui/black-button';
 import { Button } from '@/components/ui/button';
 
 export default function PasswordUpdated() {
   return (
     <>
-      <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+      <div className="mx-auto mt-3 max-w-lg rounded-3xl bg-white p-13 shadow-xl">
         <div className="flex flex-col items-center space-y-9">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white">
             <CircleCheckBig className="text-brand-blue-700 h-10 w-10" />

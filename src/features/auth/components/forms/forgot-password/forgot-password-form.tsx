@@ -14,7 +14,7 @@ export default function ForgotPasswordForm({}) {
   };
 
   return (
-    <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+    <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-13 shadow-xl">
       <form onSubmit={handleSubmit}>
         <div>
           <label className="mb-2 block text-xl leading-tight font-medium tracking-normal text-black">

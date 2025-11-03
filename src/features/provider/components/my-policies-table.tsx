@@ -513,7 +513,7 @@ export default function MyPoliciesTable() {
               </DialogTrigger>
               <DialogContent
                 showCloseButton={false}
-                className="scrollbar-hide max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-3xl border-0 bg-white px-[3.25rem] pt-[3.25rem] pb-8 opacity-100 shadow-[0rem_0.25rem_7.5rem_0rem_rgba(0,0,0,0.05)]"
+                className="scrollbar-hide max-h-[95vh] w-[61.25rem] overflow-y-auto rounded-3xl border-0 bg-white px-13 pt-13 pb-8 opacity-100 shadow-[0rem_0.25rem_7.5rem_0rem_rgba(0,0,0,0.05)]"
               >
                 <div className="space-y-[2.75rem]">
                   <div className="space-y-4">
@@ -524,7 +524,8 @@ export default function MyPoliciesTable() {
                           {currentStep === 2 && 'Current Policy'}
                           {currentStep === 3 && 'Upload Loss Run'}
                           {currentStep === 4 && 'Facility Setup'}
-                          {currentStep === 5 && 'Provider Submission Agreement'}
+                          {currentStep === 5 && 'Policy Summary'}
+                          {currentStep === 6 && 'Provider Submission Agreement'}
                         </h2>
                         <p className="text-dark-neutral-400 text-3xl leading-snug font-medium tracking-normal">
                           {currentStep === 1 &&
@@ -536,6 +537,8 @@ export default function MyPoliciesTable() {
                           {currentStep === 4 &&
                             'Required policy documents and legal compliance records.'}
                           {currentStep === 5 &&
+                            'Please review the policy details and facilities below before finalizing.'}
+                          {currentStep === 6 &&
                             'Terms and conditions for submitting facility data through the PinchIQ platform.'}
                         </p>
                       </div>
@@ -1258,7 +1261,9 @@ export default function MyPoliciesTable() {
                                   </div>
                                 </div>
 
-                                <div className="flex items-center gap-6">
+                                <div
+                                  className={`flex items-end ${facilitySetupFormData.bedCapacity.length > 1 ? 'gap-2' : 'gap-6'}`}
+                                >
                                   <div className="space-y-2">
                                     <label className="text-xl leading-tight font-medium tracking-normal text-black">
                                       Licensed
@@ -1305,6 +1310,15 @@ export default function MyPoliciesTable() {
                                       className="border-light-neutral-300 placeholder:text-dark-neutral-400 h-11-5 mt-1 w-full rounded-xl border bg-white p-4 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
                                     />
                                   </div>
+                                  {facilitySetupFormData.bedCapacity.length >
+                                  1 ? (
+                                    <div className="relative mb-3">
+                                      <button className="text-dark-neutral-200 flex -space-x-3">
+                                        <MoreVertical className="h-5 w-5" />
+                                        <MoreVertical className="h-5 w-5" />
+                                      </button>
+                                    </div>
+                                  ) : null}
                                 </div>
                               </Fragment>
                             );
@@ -1740,6 +1754,272 @@ export default function MyPoliciesTable() {
                     )}
 
                     {currentStep === 5 && (
+                      <div className="mt-3 grid grid-cols-1 gap-8">
+                        <div className="gap-4-5 flex items-center">
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleLogoUpload}
+                            accept="image/*"
+                            className="hidden"
+                          />
+                          <div className="relative flex h-13 w-13 items-center justify-center rounded-[1.125rem] bg-[#000000]/5">
+                            <div className={`flex items-center justify-center`}>
+                              <Image
+                                src={
+                                  uploadedLogo ||
+                                  '/provider/add-policy/videoaudio.svg'
+                                }
+                                alt="Policy Logo"
+                                className="h-4 w-4 object-cover"
+                                width={16}
+                                height={16}
+                              />
+                            </div>
+                            {uploadedLogo && (
+                              <button className="absolute -right-1 -bottom-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-tl-[0.625rem] bg-white transition-all">
+                                <Image
+                                  src="/provider/add-policy/pen.svg"
+                                  alt="Edit Logo"
+                                  className="h-4 w-4"
+                                  width={16}
+                                  height={16}
+                                />
+                              </button>
+                            )}
+                          </div>
+                          <div className="flex flex-col space-y-0.5">
+                            <input
+                              type="text"
+                              value={addNewPolicyFormData.policyName}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  policyName: e.target.value,
+                                })
+                              }
+                              disabled={true}
+                              placeholder="Enter policy name"
+                              className={`${addNewPolicyFormData.policyName ? 'border-transparent' : 'border-brand-blue-300'} placeholder:text-dark-neutral-200 h-8 max-w-[13.25rem] rounded-[0.25rem] border-[0.094rem] p-1 pr-2 text-6xl leading-tight font-medium tracking-normal text-[#000000] placeholder:text-6xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
+                            />
+                            <input
+                              type="url"
+                              value={addNewPolicyFormData.policyLink}
+                              onChange={e =>
+                                setAddNewPolicyFormData({
+                                  ...addNewPolicyFormData,
+                                  policyLink: e.target.value,
+                                })
+                              }
+                              disabled={true}
+                              placeholder="Add a link to a website"
+                              className={`${addNewPolicyFormData.policyLink ? 'border-transparent' : 'border-brand-blue-300'} placeholder:text-dark-neutral-200 text-brand-blue-700 h-6 max-w-[10.688rem] rounded-[0.25rem] border-[0.094rem] p-1 text-3xl leading-tight font-medium tracking-normal placeholder:text-3xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 gap-13">
+                          <div className="grid grid-cols-2 gap-1">
+                            <div className="grid grid-cols-[150fr_268fr] gap-x-4 gap-y-5">
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Insured Name
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                Springfield Care Group
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Contact name
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                Sarah Miller
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Contact phone
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                +1 (555) 341-9922
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Contact email
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                sarah@riversidecare.com
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Insurance Company
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                ABC Insurance Co.
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Policy Type
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                GL/PL
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-[150fr_268fr] gap-x-4 gap-y-5">
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Coverage Limit
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                $5 000 000
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Retroactive Date
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                Aug 20, 2024
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Deductible
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                $50,000
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Premium
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                $185,000
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Coverage Issues
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                None reported
+                              </div>
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                                Bankruptcy Filings
+                              </div>
+                              <div className="text-xl leading-tight font-medium tracking-normal text-black">
+                                None reported
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-1 gap-4">
+                            <h3 className="text-5xl leading-tight font-medium tracking-normal text-[#000000]">
+                              Policy documents
+                            </h3>
+                            {uploadedFiles.length > 0 && (
+                              <div className="w-full">
+                                {uploadedFiles.map(lossRun => (
+                                  <div
+                                    key={lossRun.id}
+                                    className="grid grid-cols-2 place-items-stretch rounded-2xl bg-white px-5 py-3"
+                                  >
+                                    <div className="flex items-center gap-10">
+                                      <div className="relative flex h-10 w-8 items-center justify-center">
+                                        <Image
+                                          src="/provider/add-policy/file-type.svg"
+                                          alt="File Icon"
+                                          width={32}
+                                          height={40}
+                                        />
+                                        <Image
+                                          src="/provider/add-policy/file-type-earmark.svg"
+                                          alt="File Icon Overlay"
+                                          width={12}
+                                          height={12}
+                                          className="absolute top-0 right-0"
+                                        />
+                                        <h4 className="text-dark-blue absolute bottom-1.5 left-2.5 text-sm leading-tight font-semibold tracking-normal lowercase">
+                                          {lossRun.fileType}
+                                        </h4>
+                                      </div>
+                                      <span className="leading-medium text-xl font-medium tracking-normal text-black">
+                                        {lossRun.name}
+                                      </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-[150fr_268fr] gap-x-4">
+                                      <span className="leading-medium bg-gray pb-0-75 h-6 w-fit rounded-[6.25rem] px-2 pt-1 text-lg font-semibold tracking-normal text-black">
+                                        {formatFileSize(lossRun.size)}
+                                      </span>
+                                      <span className="leading-medium ml-10 text-xl font-medium tracking-normal text-black">
+                                        Uploaded on:{' '}
+                                        {formatUploadDate(lossRun.uploadedAt)}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-1 gap-4">
+                            <div className="flex items-center justify-between">
+                              <h3 className="text-5xl leading-tight font-medium tracking-normal text-[#000000]">
+                                Facilities List
+                              </h3>
+                              <Button
+                                variant={'muted'}
+                                className="text-brand-blue-700 max-h-7 min-w-28 gap-2 px-3 py-2 text-lg leading-tight font-semibold tracking-normal"
+                              >
+                                <Plus className="!h-3 !w-3" />
+                                <span>Add Facility</span>
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              {Array.from([1, 2, 3, 4]).map(facility => {
+                                return (
+                                  <div
+                                    key={facility}
+                                    className="bg-gray grid grid-cols-1 gap-6 rounded-[1.75rem] px-2 pt-8 pb-2"
+                                  >
+                                    <div className="ml-13 px-4">
+                                      <div className="text-3xl leading-tight font-medium tracking-normal text-black">
+                                        Riverside Nursing Pavilion
+                                      </div>
+                                      <div className="text-dark-neutral-500 mt-3 text-lg leading-tight font-[400] tracking-normal">
+                                        12 Riverside Ave, Boston, MA
+                                      </div>
+                                    </div>
+                                    <div className="px-4">
+                                      <div className="border-b-light-neutral-400 text-dark-blue border-b pb-3 text-xl leading-tight font-medium tracking-normal">
+                                        nursing.pavilion.com
+                                      </div>
+                                      <div className="mt-4 grid grid-cols-2 gap-2">
+                                        <div>
+                                          <div className="text-dark-neutral-500 text-lg leading-tight font-medium tracking-normal">
+                                            CMS Provider ID
+                                          </div>
+                                          <div className="mt-2.5 text-3xl leading-tight font-medium tracking-normal text-black">
+                                            #154328
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <div className="text-dark-neutral-500 text-lg leading-tight font-medium tracking-normal">
+                                            Licensed Beds
+                                          </div>
+                                          <div className="mt-2.5 text-3xl leading-tight font-medium tracking-normal text-black">
+                                            SNF 80, ALF 40
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 place-content-center gap-2">
+                                      <Button
+                                        variant={'secondary'}
+                                        className="border-light-neutral-400 border-[0.047rem] bg-transparent px-5 py-3 text-lg leading-4 font-semibold tracking-normal text-black"
+                                      >
+                                        Remove
+                                      </Button>
+                                      <Button
+                                        variant={'secondary'}
+                                        className="text-dark-blue border-[0.047rem] border-white px-5 py-3 text-lg leading-4 font-semibold tracking-normal"
+                                      >
+                                        Edit
+                                      </Button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {currentStep === 6 && (
                       <div className="-mt-2.5 grid grid-cols-1 gap-8">
                         <div className="flex flex-col gap-4">
                           <div className="flex items-center gap-3 px-2.5">
@@ -1840,7 +2120,7 @@ export default function MyPoliciesTable() {
                       </div>
                     )}
 
-                    {currentStep <= 4 ? (
+                    {currentStep <= 5 ? (
                       <div className="flex items-center justify-between pt-8">
                         <DialogTrigger asChild>
                           <Button
@@ -1851,16 +2131,6 @@ export default function MyPoliciesTable() {
                           </Button>
                         </DialogTrigger>
                         <div className="flex gap-3">
-                          <Button
-                            variant={'secondary'}
-                            onClick={() => {
-                              if (currentStep === 1) return;
-                              setCurrentStep(currentStep - 1);
-                            }}
-                            className="h-11-5 border-light-neutral-300 min-w-52 border px-8 py-4 text-xl font-semibold"
-                          >
-                            Go Back
-                          </Button>
                           {currentStep === 4 ? (
                             <>
                               {!!facilitySetupFormData.basicInformation.facilityName.trim() &&
@@ -1885,26 +2155,46 @@ export default function MyPoliciesTable() {
                               (facilitySetupFormData.iAgree.trim() === 'Yes' ||
                                 facilitySetupFormData.iAgree.trim() ===
                                   'No') ? (
-                                <Button
-                                  variant={'inverse'}
-                                  onClick={() =>
-                                    setCurrentStep(currentStep + 1)
-                                  }
-                                  className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
-                                >
-                                  Complete
-                                </Button>
+                                <>
+                                  <Button
+                                    variant={'secondary'}
+                                    className="h-11-5 border-light-neutral-300 min-w-52 gap-2 border px-8 py-4 text-xl font-semibold"
+                                  >
+                                    <Plus className="mb-0-75 !h-3.5 !w-3.5" />
+                                    <span>Add More Facility</span>
+                                  </Button>
+                                  <Button
+                                    variant={'inverse'}
+                                    onClick={() =>
+                                      setCurrentStep(currentStep + 1)
+                                    }
+                                    className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                  >
+                                    Complete
+                                  </Button>
+                                </>
                               ) : (
-                                <Button
-                                  variant={'muted'}
-                                  onClick={() =>
-                                    setCurrentStep(currentStep + 1)
-                                  }
-                                  className="h-11-5 border-gray text-dark-blue flex min-w-52 items-center justify-center gap-1 border px-8 py-4 text-xl font-semibold"
-                                >
-                                  <span>Save Policy</span>
-                                  <ChevronDown className="h-3.5 w-3.5" />
-                                </Button>
+                                <>
+                                  <Button
+                                    variant={'secondary'}
+                                    onClick={() => {
+                                      setCurrentStep(currentStep - 1);
+                                    }}
+                                    className="h-11-5 border-light-neutral-300 min-w-52 border px-8 py-4 text-xl font-semibold"
+                                  >
+                                    Go Back
+                                  </Button>
+                                  <Button
+                                    variant={'muted'}
+                                    onClick={() =>
+                                      setCurrentStep(currentStep + 1)
+                                    }
+                                    className="h-11-5 border-gray text-dark-blue flex min-w-52 items-center justify-center gap-1 border px-8 py-4 text-xl font-semibold"
+                                  >
+                                    <span>Save Policy</span>
+                                    <ChevronDown className="h-3.5 w-3.5" />
+                                  </Button>
+                                </>
                               )}
                             </>
                           ) : (
@@ -1936,22 +2226,49 @@ export default function MyPoliciesTable() {
                                     'No')) ||
                               (currentStep === 3 &&
                                 uploadedFiles.length > 0) ? (
-                                <Button
-                                  variant={'inverse'}
-                                  onClick={() =>
-                                    setCurrentStep(currentStep + 1)
-                                  }
-                                  className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
-                                >
-                                  Continue
-                                </Button>
+                                <>
+                                  <Button
+                                    variant={'secondary'}
+                                    onClick={() => {
+                                      if (currentStep === 1) return;
+                                      setCurrentStep(currentStep - 1);
+                                    }}
+                                    className="h-11-5 border-light-neutral-300 min-w-52 border px-8 py-4 text-xl font-semibold"
+                                  >
+                                    Go Back
+                                  </Button>
+                                  <Button
+                                    variant={'inverse'}
+                                    onClick={() =>
+                                      setCurrentStep(currentStep + 1)
+                                    }
+                                    className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                  >
+                                    Continue
+                                  </Button>
+                                </>
                               ) : (
-                                <Button
-                                  variant={'muted'}
-                                  className={`h-11-5 border-gray text-dark-blue min-w-52 border px-8 py-4 text-xl font-semibold`}
-                                >
-                                  Continue
-                                </Button>
+                                <>
+                                  <Button
+                                    variant={'secondary'}
+                                    onClick={() => {
+                                      if (currentStep === 1) return;
+                                      setCurrentStep(currentStep - 1);
+                                    }}
+                                    className="h-11-5 border-light-neutral-300 min-w-52 border px-8 py-4 text-xl font-semibold"
+                                  >
+                                    Go Back
+                                  </Button>
+                                  <Button
+                                    variant={'inverse'}
+                                    onClick={() =>
+                                      setCurrentStep(currentStep + 1)
+                                    }
+                                    className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                  >
+                                    Save & Complete
+                                  </Button>
+                                </>
                               )}
                             </>
                           )}

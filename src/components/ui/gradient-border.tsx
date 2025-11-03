@@ -18,7 +18,7 @@ export const GradientBorder: React.FC<GradientBorderProps> = ({
   insetX = '0.06rem',
   insetY = '0.094rem',
   gradientFrom = '#e1e7f5',
-  gradientTo = '#e1e7f5',
+  gradientTo = '#d1e7f5',
   borderWidth = '1.5px',
   borderRadius = 'rounded-full',
   className = '',
@@ -32,7 +32,7 @@ export const GradientBorder: React.FC<GradientBorderProps> = ({
           insetInline: `-${insetX}`,
           insetBlock: `${insetY}`,
           background: `linear-gradient(to right, ${gradientFrom}, transparent, ${gradientTo})`,
-          padding: borderWidth,
+          padding: `${parseFloat(borderWidth) / 16}rem`,
           WebkitMask:
             'linear-gradient(#e1e7f5 0 0) content-box, linear-gradient(#e1e7f5 0 0)',
           WebkitMaskComposite: 'xor',

@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
 
   if (isAuthenticated) {
     try {
-      const parsedUserData = userData ? JSON.parse(userData) : null;
+      const parsedUserData = userData ? JSON.parse(userData as string) : null;
       user = parsedUserData?.data as User;
 
       if (!user) {
@@ -42,9 +42,9 @@ export async function middleware(request: NextRequest) {
 
   if (authRoutes.map(route => pathname.startsWith(route)).some(Boolean)) {
     if (isAuthenticated && user) {
-      if (user.role === 'broker') {
+      if (user!.role === 'broker') {
         return NextResponse.redirect(new URL('/broker', request.url));
-      } else if (user.role === 'provider') {
+      } else if (user!.role === 'provider') {
         return NextResponse.redirect(new URL('/provider', request.url));
       }
       return NextResponse.redirect(new URL('/', request.url));
@@ -67,18 +67,21 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname === '/') {
-    if (user.role === 'broker') {
+    if (user!.role === 'broker') {
       return NextResponse.redirect(new URL('/broker', request.url));
-    } else if (user.role === 'provider') {
+    } else if (user!.role === 'provider') {
       return NextResponse.redirect(new URL('/provider', request.url));
     }
   }
 
-  if (pathname.startsWith('/broker') && !canAccessBrokerRoutes(user.role)) {
+  if (pathname.startsWith('/broker') && !canAccessBrokerRoutes(user!.role)) {
     return NextResponse.redirect(new URL('/provider', request.url));
   }
 
-  if (pathname.startsWith('/provider') && !canAccessProviderRoutes(user.role)) {
+  if (
+    pathname.startsWith('/provider') &&
+    !canAccessProviderRoutes(user!.role)
+  ) {
     return NextResponse.redirect(new URL('/broker', request.url));
   }
 

@@ -4,8 +4,6 @@ import { motion, useMotionValueEvent, useScroll } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 
-import { BorderEffect } from './border-effect';
-
 interface NavbarProps {
   children: React.ReactNode;
   className?: string;

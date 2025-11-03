@@ -28,7 +28,7 @@ export default function SignupForm({ role }: SignupFormProps) {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+    <div className="mx-auto max-w-lg rounded-3xl bg-white p-13 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-5-5">
         <div>
           <label className="mb-2 block text-xl leading-tight font-medium tracking-normal text-black">

@@ -5,7 +5,6 @@ import { KeyboardEvent, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import BlackButton from '@/components/ui/black-button';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -57,7 +56,7 @@ export default function VerifyEmailForm({
   };
 
   return (
-    <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-12 shadow-xl">
+    <div className="mx-auto mt-8 max-w-lg rounded-3xl bg-white p-13 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <h2 className="tracking-snug text-6xl leading-snug font-semibold text-black">
