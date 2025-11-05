@@ -3,7 +3,6 @@
 import { Fragment } from 'react';
 
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
 
 import {
   ArrowLeft,
@@ -24,7 +23,6 @@ import { cn } from '@/lib/utils';
 import { useProviderStore } from '@/store/provider.store';
 
 export default function PolicyOverviewPage() {
-  const params = useSearchParams();
   const {
     isEditModeOn,
     setIsEditModeOn,
@@ -166,7 +164,9 @@ export default function PolicyOverviewPage() {
                       type="text"
                       value={editPolicyFormData.contactName}
                       onChange={e =>
-                        setEditPolicyFormData({ contactName: e.target.value })
+                        setEditPolicyFormData({
+                          contactName: e.target.value,
+                        })
                       }
                       placeholder="Enter contact name"
                       className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
@@ -184,7 +184,9 @@ export default function PolicyOverviewPage() {
                       type="tel"
                       value={editPolicyFormData.contactPhone}
                       onChange={e =>
-                        setEditPolicyFormData({ contactPhone: e.target.value })
+                        setEditPolicyFormData({
+                          contactPhone: e.target.value,
+                        })
                       }
                       placeholder="Enter contact phone"
                       className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
@@ -202,7 +204,9 @@ export default function PolicyOverviewPage() {
                       type="email"
                       value={editPolicyFormData.contactEmail}
                       onChange={e =>
-                        setEditPolicyFormData({ contactEmail: e.target.value })
+                        setEditPolicyFormData({
+                          contactEmail: e.target.value,
+                        })
                       }
                       placeholder="Enter contact email"
                       className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
@@ -249,7 +253,9 @@ export default function PolicyOverviewPage() {
                       type="text"
                       value={editPolicyFormData.effectiveDate}
                       onChange={e =>
-                        setEditPolicyFormData({ effectiveDate: e.target.value })
+                        setEditPolicyFormData({
+                          effectiveDate: e.target.value,
+                        })
                       }
                       placeholder="Enter effective date"
                       className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
@@ -287,7 +293,9 @@ export default function PolicyOverviewPage() {
                       type="text"
                       value={editPolicyFormData.coverageLimit}
                       onChange={e =>
-                        setEditPolicyFormData({ coverageLimit: e.target.value })
+                        setEditPolicyFormData({
+                          coverageLimit: e.target.value,
+                        })
                       }
                       placeholder="Enter coverage limit"
                       className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
@@ -439,7 +447,9 @@ export default function PolicyOverviewPage() {
                         type="text"
                         value={editPolicyFormData.deductible}
                         onChange={e =>
-                          setEditPolicyFormData({ deductible: e.target.value })
+                          setEditPolicyFormData({
+                            deductible: e.target.value,
+                          })
                         }
                         placeholder="Enter deductible"
                         className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"
@@ -474,7 +484,9 @@ export default function PolicyOverviewPage() {
                         type="text"
                         value={editPolicyFormData.bankruptcy}
                         onChange={e =>
-                          setEditPolicyFormData({ bankruptcy: e.target.value })
+                          setEditPolicyFormData({
+                            bankruptcy: e.target.value,
+                          })
                         }
                         placeholder="Enter bankruptcy info"
                         className="border-brand-blue-300 placeholder:text-dark-neutral-200 h-6 max-w-52 rounded-[0.25rem] border-[0.094rem] p-1 text-xl leading-tight font-medium tracking-normal text-black placeholder:text-xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none"

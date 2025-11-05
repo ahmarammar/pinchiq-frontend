@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, Suspense } from 'react';
 
 import type { Metadata } from 'next';
 
@@ -16,5 +16,9 @@ interface PolicyOverviewLayoutProps {
 export default function PolicyOverviewLayout({
   children,
 }: PolicyOverviewLayoutProps) {
-  return <PolicyOverviewClientLayout>{children}</PolicyOverviewClientLayout>;
+  return (
+    <Suspense fallback={<div></div>}>
+      <PolicyOverviewClientLayout>{children}</PolicyOverviewClientLayout>
+    </Suspense>
+  );
 }
