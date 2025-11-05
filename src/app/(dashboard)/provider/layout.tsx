@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 
 import type { Metadata } from 'next';
 
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
+
 import WorkspaceHeader from '@/features/provider/components/workspace-header';
 
 export const metadata: Metadata = {
@@ -24,8 +26,8 @@ export default function ProviderWorkspaceLayout({
           userRole={'Admin Account'}
         />
       </div>
-      <main className="relative w-full flex-1 rounded-tl-4xl rounded-tr-4xl bg-white px-22 py-16">
-        {children}
+      <main className="relative w-full flex-1 rounded-tl-4xl rounded-tr-4xl bg-white">
+        <NuqsAdapter>{children}</NuqsAdapter>
       </main>
     </div>
   );

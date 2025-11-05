@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+
 import { Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -22,6 +25,14 @@ export default function WorkspaceHeader({
   userRole = 'Admin Account',
 }: WorkspaceHeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const isInPoliciesRoute = pathname?.startsWith('/provider/policies/');
+
+  const handleGoBack = () => {
+    router.back();
+  };
 
   return (
     <div className="w-full overflow-hidden">
@@ -29,7 +40,23 @@ export default function WorkspaceHeader({
         <GradientBorder className="w-full" rotation={0.1125}>
           <DesktopNavBody className="h-12-5 w-full overflow-hidden rounded-[6.25rem] bg-[#5b8ad6] px-8 py-4 shadow-xs shadow-white/5 backdrop-blur-md">
             <div className="flex shrink-0 items-center">
-              <Logo />
+              {isInPoliciesRoute ? (
+                <button
+                  onClick={handleGoBack}
+                  className="flex items-center gap-1 text-xl leading-tight font-bold tracking-normal text-white transition-colors hover:text-white/90"
+                >
+                  <Image
+                    src="/provider/policy-overview/ArrowUpLeft.svg"
+                    alt="Go back"
+                    className="mr-1 mb-0.5"
+                    width={14}
+                    height={14}
+                  />
+                  <span>Go back</span>
+                </button>
+              ) : (
+                <Logo />
+              )}
             </div>
 
             <div className="relative left-12 mx-auto max-w-[21.25rem] flex-1">

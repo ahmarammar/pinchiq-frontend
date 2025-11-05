@@ -3,6 +3,7 @@
 import { Fragment, useRef, useState } from 'react';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import {
   ColumnDef,
@@ -628,7 +629,7 @@ export default function MyPoliciesTable() {
                                 })
                               }
                               placeholder="Enter policy name"
-                              className={`${addNewPolicyFormData.policyName ? 'border-transparent' : 'border-brand-blue-300'} placeholder:text-dark-neutral-200 h-8 max-w-[13.25rem] rounded-[0.25rem] border-[0.094rem] p-1 pr-2 text-6xl leading-tight font-medium tracking-normal text-[#000000] placeholder:text-6xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
+                              className={`${addNewPolicyFormData.policyName ? 'w-full border-transparent' : 'border-brand-blue-300 max-w-[13.25rem]'} placeholder:text-dark-neutral-200 h-8 rounded-[0.25rem] border-[0.094rem] p-1 pr-2 text-6xl leading-tight font-medium tracking-normal text-[#000000] placeholder:text-6xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
                             />
                             <input
                               type="url"
@@ -640,7 +641,7 @@ export default function MyPoliciesTable() {
                                 })
                               }
                               placeholder="Add a link to a website"
-                              className={`${addNewPolicyFormData.policyLink ? 'border-transparent' : 'border-brand-blue-300'} placeholder:text-dark-neutral-200 text-brand-blue-700 h-6 max-w-[10.688rem] rounded-[0.25rem] border-[0.094rem] p-1 text-3xl leading-tight font-medium tracking-normal placeholder:text-3xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
+                              className={`${addNewPolicyFormData.policyLink ? 'w-full border-transparent' : 'border-brand-blue-300 max-w-[13.25rem]'} placeholder:text-dark-neutral-200 text-brand-blue-700 h-6 rounded-[0.25rem] border-[0.094rem] p-1 text-3xl leading-tight font-medium tracking-normal placeholder:text-3xl placeholder:leading-tight placeholder:font-medium placeholder:tracking-normal focus:outline-none`}
                             />
                           </div>
                         </div>
@@ -1035,7 +1036,7 @@ export default function MyPoliciesTable() {
                             <h3 className="text-3xl leading-snug font-medium tracking-normal text-black">
                               Upload Documents
                             </h3>
-                            <p className="text-dark-neutral-500 mt-3.5 text-xl leading-tight font-[400] tracking-normal">
+                            <p className="text-dark-neutral-500 mt-3.5 text-xl leading-tight font-normal tracking-normal">
                               Drag & drop or
                               <span className="text-brand-blue-700 px-1 hover:underline">
                                 click to upload
@@ -1102,7 +1103,7 @@ export default function MyPoliciesTable() {
                         )}
 
                         <div className="text-start">
-                          <p className="text-dark-neutral-500 text-xl leading-normal font-[400] tracking-normal">
+                          <p className="text-dark-neutral-500 text-xl leading-normal font-normal tracking-normal">
                             Uploaded documents must not include personally
                             identifiable health information (PHI) unless
                             authorized under HIPAA or relevant laws. By
@@ -1820,7 +1821,7 @@ export default function MyPoliciesTable() {
                         <div className="grid grid-cols-1 gap-13">
                           <div className="grid grid-cols-2 gap-1">
                             <div className="grid grid-cols-[150fr_268fr] gap-x-4 gap-y-5">
-                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal">
+                              <div className="text-dark-neutral-500 text-xl leading-tight font-medium tracking-normal text-nowrap">
                                 Insured Name
                               </div>
                               <div className="text-xl leading-tight font-medium tracking-normal text-black">
@@ -1969,7 +1970,7 @@ export default function MyPoliciesTable() {
                                       <div className="text-3xl leading-tight font-medium tracking-normal text-black">
                                         Riverside Nursing Pavilion
                                       </div>
-                                      <div className="text-dark-neutral-500 mt-3 text-lg leading-tight font-[400] tracking-normal">
+                                      <div className="text-dark-neutral-500 mt-3 text-lg leading-tight font-normal tracking-normal">
                                         12 Riverside Ave, Boston, MA
                                       </div>
                                     </div>
@@ -2374,18 +2375,22 @@ export default function MyPoliciesTable() {
                                     </span>
                                   </button>
 
-                                  <button className="bg-light-neutral-100 hover:bg-light-neutral-300 -ml-4 flex h-[5.625rem] w-[5.625rem] flex-col items-center justify-center gap-4 rounded-2xl transition-all outline-none">
-                                    <Image
-                                      src="/provider/workspace/messages.svg"
-                                      alt="Edit Policy Icon"
-                                      width={24}
-                                      height={24}
-                                      className="h-6 w-6"
-                                    />
-                                    <span className="text-lg leading-tight font-semibold tracking-normal text-black">
-                                      Edit Policy
-                                    </span>
-                                  </button>
+                                  <Link
+                                    href={`/provider/policies/policy-overview?policy_id=${row.original.id}`}
+                                  >
+                                    <button className="bg-light-neutral-100 hover:bg-light-neutral-300 -ml-4 flex h-[5.625rem] w-[5.625rem] flex-col items-center justify-center gap-4 rounded-2xl transition-all outline-none">
+                                      <Image
+                                        src="/provider/workspace/messages.svg"
+                                        alt="Edit Policy Icon"
+                                        width={24}
+                                        height={24}
+                                        className="h-6 w-6"
+                                      />
+                                      <span className="text-lg leading-tight font-semibold tracking-normal text-black">
+                                        Edit Policy
+                                      </span>
+                                    </button>
+                                  </Link>
                                 </div>
                               </div>
                             </div>

@@ -1,5 +1,5 @@
-import MyPoliciesTable from '@/features/provider/components/my-policies-table';
+import { redirect } from 'next/navigation';
 
 export default async function ProviderDashboardPage() {
-  return <MyPoliciesTable />;
+  return redirect('/provider/policies');
 }
