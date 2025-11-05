@@ -1,9 +1,9 @@
 'use client';
 
-import { ReactNode, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,8 @@ export default function PolicyOverviewClientLayout({
   children,
 }: PolicyOverviewClientLayoutProps) {
   const router = useRouter();
+  const params = useSearchParams();
+  const policyId = params.get('policy_id');
   const {
     editPolicyFormData,
     setEditPolicyFormData,
@@ -42,6 +44,14 @@ export default function PolicyOverviewClientLayout({
   const handleLogoClick = () => {
     fileInputRef.current?.click();
   };
+
+  useEffect(() => {
+    if (!policyId) {
+      router.push('/provider/policies');
+    }
+  }, [params]);
+
+  if (!policyId) return null;
 
   return (
     <div className="px-22 pt-10">

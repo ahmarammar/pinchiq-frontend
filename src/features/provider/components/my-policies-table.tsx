@@ -1777,7 +1777,7 @@ export default function MyPoliciesTable() {
                                 height={16}
                               />
                             </div>
-                            {uploadedLogo && (
+                            {/* {uploadedLogo && (
                               <button className="absolute -right-1 -bottom-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-tl-[0.625rem] bg-white transition-all">
                                 <Image
                                   src="/provider/add-policy/pen.svg"
@@ -1787,7 +1787,7 @@ export default function MyPoliciesTable() {
                                   height={16}
                                 />
                               </button>
-                            )}
+                            )} */}
                           </div>
                           <div className="flex flex-col space-y-0.5">
                             <input
@@ -2153,9 +2153,7 @@ export default function MyPoliciesTable() {
                                   (company.managedByCompany.trim() === 'Yes' ||
                                     company.managedByCompany.trim() === 'No')
                               ) &&
-                              (facilitySetupFormData.iAgree.trim() === 'Yes' ||
-                                facilitySetupFormData.iAgree.trim() ===
-                                  'No') ? (
+                              facilitySetupFormData.iAgree.trim() === 'Yes' ? (
                                 <>
                                   <Button
                                     variant={'secondary'}
@@ -2225,8 +2223,8 @@ export default function MyPoliciesTable() {
                                   'Yes' ||
                                   currentPolicyFormData.bankruptcyFilings.trim() ===
                                     'No')) ||
-                              (currentStep === 3 &&
-                                uploadedFiles.length > 0) ? (
+                              (currentStep === 3 && uploadedFiles.length > 0) ||
+                              currentStep === 5 ? (
                                 <>
                                   <Button
                                     variant={'secondary'}
@@ -2238,15 +2236,27 @@ export default function MyPoliciesTable() {
                                   >
                                     Go Back
                                   </Button>
-                                  <Button
-                                    variant={'inverse'}
-                                    onClick={() =>
-                                      setCurrentStep(currentStep + 1)
-                                    }
-                                    className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
-                                  >
-                                    Continue
-                                  </Button>
+                                  {currentStep === 5 ? (
+                                    <Button
+                                      variant={'inverse'}
+                                      onClick={() =>
+                                        setCurrentStep(currentStep + 1)
+                                      }
+                                      className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                    >
+                                      Save & Complete
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      variant={'inverse'}
+                                      onClick={() =>
+                                        setCurrentStep(currentStep + 1)
+                                      }
+                                      className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                    >
+                                      Continue
+                                    </Button>
+                                  )}
                                 </>
                               ) : (
                                 <>
@@ -2261,13 +2271,13 @@ export default function MyPoliciesTable() {
                                     Go Back
                                   </Button>
                                   <Button
-                                    variant={'inverse'}
+                                    variant={'muted'}
                                     onClick={() =>
                                       setCurrentStep(currentStep + 1)
                                     }
-                                    className={`h-11-5 border-gray min-w-52 border px-8 py-4 text-xl font-semibold text-white`}
+                                    className={`h-11-5 border-gray text-dark-blue min-w-52 border px-8 py-4 text-xl font-semibold`}
                                   >
-                                    Save & Complete
+                                    Continue
                                   </Button>
                                 </>
                               )}
